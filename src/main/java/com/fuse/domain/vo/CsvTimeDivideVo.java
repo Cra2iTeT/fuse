@@ -13,7 +13,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CsvTimeDivide implements Serializable {
+public class CsvTimeDivideVo implements Serializable {
+    private String filename;
     private long startTime;
     private long endTime;
 }

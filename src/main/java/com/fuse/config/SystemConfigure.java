@@ -8,26 +8,13 @@ import org.springframework.stereotype.Component;
  * @since 2023/4/29 14:28
  */
 @Component
-public class SystemConfig {
+public class SystemConfigure {
 
-    @Value("${csv.temporary.save.path}")
-    private String CsvTemporarySavePath;
-
-    @Value("${python.path.exe}")
+    @Value("${python.exe-path}")
     private String pythonExePath;
-
-    @Value("${python.path.script-parent}")
-    private String pythonScriptParentPath;
-
-    public String getCsvTemporarySavePath() {
-        return CsvTemporarySavePath;
-    }
 
     public String getPythonExePath() {
         return pythonExePath;
     }
 
-    public String getPythonScriptParentPath() {
-        return pythonScriptParentPath;
-    }
 }

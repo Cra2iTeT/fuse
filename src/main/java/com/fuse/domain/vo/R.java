@@ -1,5 +1,6 @@
-package com.Cra2iTeT.commons;
+package com.fuse.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,13 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class R <T> implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class R<T> implements Serializable {
     private int code;
     private String msg;
     private T data;
 
-    public R(int code,String msg) {
+    public R(int code, String msg) {
         this(code,msg,null);
     }
 

@@ -16,3 +16,6 @@ spring:
     port: 6379
     password: 123456
     host: 192.168.150.13
+
+python:
+  exe-path: D:\dev\Python\Python39\python.exe
