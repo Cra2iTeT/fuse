@@ -1,4 +1,4 @@
-package com.fuse.config;
+package com.fuse.config.configure;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

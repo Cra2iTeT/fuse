@@ -3,7 +3,7 @@ package com.fuse.service.impl;
 import cn.hutool.core.util.RandomUtil;
 import com.fuse.common.SystemCode;
 import com.fuse.config.SystemConfig;
-import com.fuse.config.SystemConfigure;
+import com.fuse.config.configure.SystemConfigure;
 import com.fuse.domain.vo.CsvTimeDivideVo;
 import com.fuse.domain.vo.R;
 import com.fuse.exception.PythonScriptRunException;

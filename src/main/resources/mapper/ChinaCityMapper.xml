@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuse.domain.pojo.ChinaCity">
+    
+    <resultMap id="all" type="com.fuse.domain.pojo.ChinaCity">
+        <id column="locationId" property="location_id"></id>
+        <result column="locationNameEn" property="location_name_en"></result>
+        <result column="locationName" property="location_name"></result>
+    </resultMap>
+
+    <sql id="all_Columns">
+        location_id,location_name_en,location_name
+    </sql>
+    
+    <select id="getAllChinaCities" resultMap="all">
+        select <include refid="all_Columns" /> from china_city
+    </select>
+
+</mapper>
