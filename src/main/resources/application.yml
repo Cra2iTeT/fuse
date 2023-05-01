@@ -28,3 +28,8 @@ thread-pool:
     queue-size: 300
     prefix: weather-Executor-
     keep-alive-seconds: 60
+
+weather:
+  prefix: https://devapi.qweather.com/v7/weather/24h?location=
+  key: 553f1bc8f5f44e079c9ecc0fe82d7bf9
+

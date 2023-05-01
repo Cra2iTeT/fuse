@@ -1,6 +1,9 @@
 package com.fuse.mapper;
 
+import com.fuse.domain.pojo.CityWeatherEachHour;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @author Cra2iTeT
@@ -8,4 +11,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CityWeatherEachHourMapper {
+    boolean saveOrUpdate(List<CityWeatherEachHour> cityWeatherEachHours);
 }

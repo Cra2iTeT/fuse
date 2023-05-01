@@ -24,7 +24,7 @@ public class WeatherThreadPoolConfig {
     }
 
     @Bean
-    public Executor weatherExecutor() {
+    public ThreadPoolTaskExecutor weatherExecutors() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(weatherThreadPoolConfigure.getCoreSize());
         executor.setMaxPoolSize(weatherThreadPoolConfigure.getMaxSize());
