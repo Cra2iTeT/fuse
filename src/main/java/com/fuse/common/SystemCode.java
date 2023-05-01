@@ -9,6 +9,16 @@ public enum SystemCode {
     CSV_RESOLVE_ERROR_TYPE_MISMATCH(10001, "只能上传CSV文件"),
     CSV_RESOLVE_SUCCESS(10002, "CSV文件解析成功"),
     CSV_RESOLVE_ERROR(10003, "CSV文件解析失败，请联系系统管理员"),
+
+    SYSTEM_ERROR_RED(1001, "系统红色预警"),
+    SYSTEM_ERROR_ORIGIN(1002, "系统橙色预警"),
+    SYSTEM_ERROR_YELLOW(1003, "系统黄色预警"),
+    SYSTEM_ERROR_BLUE(1004, "系统蓝色预警"),
+
+    WEBSOCKET_CONNECT_OPEN(2001, "websocket连接建立成功"),
+    WEBSOCKET_CONNECT_CLOSE(2002, "websocket连接关闭"),
+    WEBSOCKET_CONNECT_ABNORMAL(2003, "websocket连接异常"),
+
     SUCCESS(200, "Success"),
 
     ERROR(401, "Error");
