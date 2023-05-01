@@ -16,11 +16,14 @@ import com.fuse.domain.pojo.ChinaCity;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import com.fuse.domain.pojo.PredictResult;
 import com.fuse.domain.to.PredictTo;
+import com.fuse.exception.ObjectException;
+import com.fuse.exception.PredictException;
 import com.fuse.exception.WeatherFetchException;
 import com.fuse.mapper.ChinaCityMapper;
 import com.fuse.mapper.CityWeatherEachHourMapper;
 import com.fuse.mapper.PredictResultMapper;
 import com.fuse.service.PredictService;
+import com.fuse.util.MybatisBatchUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,8 +34,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -52,11 +53,13 @@ public class AutoPredictService {
 
     private final RabbitTemplate rabbitTemplate;
 
+    private final MybatisBatchUtils mybatisBatchUtils;
+
     private final PredictService predictService;
 
     private final PredictResultMapper predictResultMapper;
 
-    public AutoPredictService(ChinaCityMapper chinaCityMapper, CityWeatherEachHourMapper cityWeatherEachHourMapper, @Qualifier("weatherExecutors") ThreadPoolTaskExecutor weatherExecutors, WeatherConfigure weatherConfigure, RabbitTemplate rabbitTemplate, PredictService predictService, PredictResultMapper predictResultMapper) {
+    public AutoPredictService(ChinaCityMapper chinaCityMapper, CityWeatherEachHourMapper cityWeatherEachHourMapper, @Qualifier("weatherExecutors") ThreadPoolTaskExecutor weatherExecutors, WeatherConfigure weatherConfigure, RabbitTemplate rabbitTemplate, PredictService predictService, PredictResultMapper predictResultMapper, MybatisBatchUtils mybatisBatchUtils) {
         this.chinaCityMapper = chinaCityMapper;
         this.cityWeatherEachHourMapper = cityWeatherEachHourMapper;
         this.weatherExecutors = weatherExecutors;
@@ -64,58 +67,46 @@ public class AutoPredictService {
         this.rabbitTemplate = rabbitTemplate;
         this.predictService = predictService;
         this.predictResultMapper = predictResultMapper;
+        this.mybatisBatchUtils = mybatisBatchUtils;
     }
 
     @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
     public void updateWeather() {
         List<ChinaCity> chinaCities = fetchChinaCity();
 
-        try {
-            fetchAllWeatherFromNet(chinaCities);
-        } catch (WeatherFetchException e) {
-            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION,
-                    JSONUtil.toJsonStr(e));
-        }
+        fetchAllWeatherFromNet(chinaCities);
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
     public void autoPredict() {
         List<ChinaCity> chinaCities = fetchChinaCity();
         getWeatherFromDBAndPredict(chinaCities);
     }
 
     private List<ChinaCity> fetchChinaCity() {
+
         return chinaCityMapper.getAllChinaCities();
     }
 
-    private void fetchAllWeatherFromNet(List<ChinaCity> chinaCities) throws WeatherFetchException {
+    private void fetchAllWeatherFromNet(List<ChinaCity> chinaCities) {
         // 分组
         int citySize = chinaCities.size();
         int size = Math.min(citySize, 6);
-
-        List<Future<Boolean>> futures = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
             int startIdx = citySize / size * i;
             int endIdx = i != size - 1 ? citySize / size * (i + 1) : citySize;
             List<ChinaCity> cities = chinaCities.subList(startIdx, endIdx);
 
-            Future<Boolean> submit = weatherExecutors.submit(() -> {
+            weatherExecutors.execute(() -> {
                 List<CityWeatherEachHour> cityWeatherEachHours = transferAndGetWeather(cities);
-                return saveOrUpdateToDB(cityWeatherEachHours);
-            });
-
-            futures.add(submit);
-        }
-
-        for (Future<Boolean> future : futures) {
-            try {
-                if (!future.isDone() || !future.get()) {
-                    throw new WeatherFetchException("天气数据获取异常，请与管理员联系");
+                try {
+                    saveOrUpdateToDB(cityWeatherEachHours);
+                } catch (ObjectException e) {
+                    WeatherFetchException exception = new WeatherFetchException("从网络中获取天气，更新到数据库时异常", e.getMessage());
+                    rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION, JSONUtil.toJsonStr(exception));
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new WeatherFetchException("天气数据获取异常，请与管理员联系");
-            }
+            });
         }
     }
 
@@ -142,8 +133,10 @@ public class AutoPredictService {
             cities.forEach(chinaCity -> {
                 locationIds.add(chinaCity.getLocationId());
             });
+            long from = System.currentTimeMillis() + 1000 * 60 * 60 * 12;
+            long to = from + 1000 * 60 * 60 * 24 * 3;
             weatherExecutors.execute(() -> {
-                List<CityWeatherEachHour> weather3d = get3dWeatherFromDB(locationIds);
+                List<CityWeatherEachHour> weather3d = cityWeatherEachHourMapper.get3dWeather(from, to, locationIds);
                 // 根据城市分组
                 Map<String, List<CityWeatherEachHour>> weather3dGroup = weather3d.stream()
                         .collect(Collectors.groupingBy(CityWeatherEachHour::getLocationId));
@@ -152,7 +145,13 @@ public class AutoPredictService {
                     String path = saveWeatherToCsv(stringListEntry.getValue());
 
                     List<PredictResult> predictResults = predictByPythonScript(path);
-                    predictResultMapper.saveOrUpdate(predictResults);
+                    try {
+                        mybatisBatchUtils.batch(predictResults, predictResultMapper.getClass(),
+                                (predictResult, predictResultMapper) -> predictResultMapper.saveOrUpdate(predictResult));
+                    } catch (ObjectException e) {
+                        PredictException exception = new PredictException("预测自动更新失败", e.getMessage());
+                        rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PREDICT_EXCEPTION, JSONUtil.toJsonStr(exception));
+                    }
                 }
             });
         }
@@ -180,20 +179,10 @@ public class AutoPredictService {
         return path;
     }
 
-    private List<CityWeatherEachHour> get24hWeatherFromDB(List<String> locationIds) {
-        return cityWeatherEachHourMapper.get24hWeather(locationIds);
-    }
-
-    private List<CityWeatherEachHour> get48hWeatherFromDB(List<String> locationIds) {
-        return cityWeatherEachHourMapper.get48hWeather(locationIds);
-    }
-
-    private List<CityWeatherEachHour> get3dWeatherFromDB(List<String> locationIds) {
-        return cityWeatherEachHourMapper.get3dWeather(locationIds);
-    }
-
-    private boolean saveOrUpdateToDB(List<CityWeatherEachHour> cityWeatherEachHours) {
-        return cityWeatherEachHourMapper.saveOrUpdate(cityWeatherEachHours);
+    private void saveOrUpdateToDB(List<CityWeatherEachHour> cityWeatherEachHours) throws ObjectException {
+        mybatisBatchUtils.batch(cityWeatherEachHours, CityWeatherEachHourMapper.class,
+                (cityWeatherEachHour, cityWeatherEachHourMapper) -> cityWeatherEachHourMapper
+                        .saveOrUpdate(cityWeatherEachHour));
     }
 
     private List<CityWeatherEachHour> fetchWeather(String locationId) {

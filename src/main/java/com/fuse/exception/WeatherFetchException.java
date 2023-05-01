@@ -7,10 +7,14 @@ package com.fuse.exception;
 public class WeatherFetchException extends ObjectException {
 
     public WeatherFetchException() {
-        super("WeatherFetchException.class");
+        this("","");
     }
 
     public WeatherFetchException(String message) {
-        super(message,"WeatherFetchException.class");
+        this(message,"");
+    }
+
+    public WeatherFetchException(String message,String log) {
+        super(message,"WeatherFetchException.class",log);
     }
 }

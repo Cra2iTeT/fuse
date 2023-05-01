@@ -6,10 +6,14 @@ package com.fuse.exception;
  */
 public class PythonScriptRunException extends ObjectException {
     public PythonScriptRunException() {
-        super("PythonScriptRunException.class");
+        this("", "");
     }
 
     public PythonScriptRunException(String message) {
-        super(message,"PythonScriptRunException.class");
+        this(message, "");
+    }
+
+    public PythonScriptRunException(String message, String log) {
+        super(message, "PythonScriptRunException.class", log);
     }
 }

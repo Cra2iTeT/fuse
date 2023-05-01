@@ -2,6 +2,7 @@ package com.fuse.mapper;
 
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,12 +13,11 @@ import java.util.List;
 @Mapper
 public interface CityWeatherEachHourMapper {
 
-    // TODO 批量导入sql语句没有写
-    boolean saveOrUpdate(List<CityWeatherEachHour> cityWeatherEachHours);
+    // TODO 批量导入sql语句没有
 
-    List<CityWeatherEachHour> get24hWeather(List<String> locationIds);
+    int saveOrUpdate(CityWeatherEachHour cityWeatherEachHour);
 
-    List<CityWeatherEachHour> get48hWeather(List<String> locationIds);
+    int save(CityWeatherEachHour cityWeatherEachHour);
 
-    List<CityWeatherEachHour> get3dWeather(List<String> locationIds);
+    List<CityWeatherEachHour> get3dWeather(@Param("from") long from, @Param("to") long to, @Param("locationIds") List<String> locationIds);
 }

@@ -18,7 +18,7 @@ public class ObjectException extends Exception {
     }
 
     public ObjectException(String errorType, String log) {
-        this("", errorType,errorType);
+        this("", errorType,log);
     }
 
     public ObjectException(String message, String errorType, String log) {

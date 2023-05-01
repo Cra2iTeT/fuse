@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuse.mapper.PredictResultMapper">
+
+    <insert id="saveOrUpdate" parameterType="com.fuse.domain.pojo.PredictResult">
+        insert into predict_result (`time`, region, fan_id, power, yd15)
+        values (#{time}, #{region}, #{fanId}, #{power}, #{yd15})
+    </insert>
+
+</mapper>

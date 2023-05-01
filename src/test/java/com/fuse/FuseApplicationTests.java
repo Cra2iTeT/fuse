@@ -2,6 +2,7 @@ package com.fuse;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
@@ -13,7 +14,10 @@ import com.fuse.config.SystemConfig;
 import com.fuse.config.configure.SystemConfigure;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import com.fuse.domain.vo.CsvTimeDivideVo;
+import com.fuse.exception.ObjectException;
 import com.fuse.exception.PythonScriptRunException;
+import com.fuse.mapper.CityWeatherEachHourMapper;
+import com.fuse.util.MybatisBatchUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +32,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FuseApplicationTests {
 
     @Autowired
@@ -116,5 +121,53 @@ class FuseApplicationTests {
         rabbitTemplate.setMandatory(true);
         //发送消息
         rabbitTemplate.convertAndSend(RabbitmqConfig.EXCHANGE_FANOUT_EXCEPTION_LISTENER, "", "2222");
+    }
+
+    @Autowired
+    private CityWeatherEachHourMapper cityWeatherEachHourMapper;
+
+    @Autowired
+    private MybatisBatchUtils mybatisBatchUtils;
+
+    @Test
+    void test7() throws ObjectException, InterruptedException {
+        CityWeatherEachHour eachHour = new CityWeatherEachHour();
+        eachHour.setLocationId(System.currentTimeMillis() + "1");
+        eachHour.setTime(System.currentTimeMillis());
+        eachHour.setTemperature((byte) 37);
+        eachHour.setWindDirection(350);
+        eachHour.setPressure(1000);
+        eachHour.setWindSpeed((byte) 10);
+        eachHour.setHumidity((byte) 20);
+
+        cityWeatherEachHourMapper.save(eachHour);
+        Thread.sleep(3000);
+        eachHour.setHumidity((byte) 25);
+
+        CityWeatherEachHour eachHour2 = new CityWeatherEachHour();
+        eachHour2.setLocationId(System.currentTimeMillis() + "2");
+        eachHour2.setTime(System.currentTimeMillis());
+        eachHour2.setTemperature((byte) 38);
+        eachHour2.setWindDirection(350);
+        eachHour2.setPressure(1000);
+        eachHour2.setWindSpeed((byte) 10);
+        eachHour2.setHumidity((byte) 20);
+
+
+        CityWeatherEachHour eachHour3 = new CityWeatherEachHour();
+        eachHour3.setLocationId(System.currentTimeMillis() + "3");
+        eachHour3.setTime(System.currentTimeMillis());
+        eachHour3.setTemperature((byte) 37);
+        eachHour3.setWindDirection(350);
+        eachHour3.setPressure(1000);
+        eachHour3.setWindSpeed((byte) 10);
+        eachHour3.setHumidity((byte) 20);
+
+//        cityWeatherEachHourMapper.save(eachHour);
+
+        List<CityWeatherEachHour> list = new ArrayList<>();
+        list.add(eachHour);
+        list.add(eachHour2);
+        list.add(eachHour3);
     }
 }

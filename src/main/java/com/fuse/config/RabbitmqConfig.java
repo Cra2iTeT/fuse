@@ -16,7 +16,10 @@ public class RabbitmqConfig {
     public static final String QUEUE_EXCEPTION_LISTENER_PYTHON_SCRIPT_EXCEPTION = "exception_listener-python_script";
     public static final String ROUTINGKEY_PYTHON_SCRIPT_EXCEPTION = "exception.listener.python_script";
     public static final String QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION = "exception_listener-weather_fetch";
-    public static final String ROUTINGKEY_WEATHER_FETCH_EXCEPTION = "exception.listener.weather_fetch";
+    public static final String ROUTINGKEY_WEATHER_FETCH_EXCEPTION = "exception.listener.predict";
+
+    public static final String QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION = "exception_listener-predict";
+    public static final String ROUTINGKEY_PREDICT_EXCEPTION = "exception.listener.weather_fetch";
 
     public static final String QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION = "exception_listener-object";
     public static final String ROUTINGKEY_OBJECT_EXCEPTION = "exception.listener.object";
@@ -36,6 +39,11 @@ public class RabbitmqConfig {
         return new Queue(QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION);
     }
 
+    @Bean(QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION)
+    public Queue QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION() {
+        return new Queue(QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION);
+    }
+
     @Bean(QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION)
     public Queue QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION() {
         return new Queue(QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION);
@@ -47,6 +55,14 @@ public class RabbitmqConfig {
             @Qualifier(EXCHANGE_FANOUT_EXCEPTION_LISTENER) Exchange exchange) {
         return BindingBuilder.bind(queue).to(exchange)
                 .with(ROUTINGKEY_PYTHON_SCRIPT_EXCEPTION).noargs();
+    }
+
+    @Bean
+    public Binding BINDING_QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION(
+            @Qualifier(QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION) Queue queue,
+            @Qualifier(EXCHANGE_FANOUT_EXCEPTION_LISTENER) Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange)
+                .with(ROUTINGKEY_PREDICT_EXCEPTION).noargs();
     }
 
     @Bean

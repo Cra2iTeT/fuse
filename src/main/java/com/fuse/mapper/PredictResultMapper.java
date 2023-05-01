@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Mapper
 public interface PredictResultMapper {
-    void saveOrUpdate(List<PredictResult> predictResults);
+    int saveOrUpdate(PredictResult predictResults);
 }

@@ -2,6 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fuse.mapper.CityWeatherEachHourMapper">
 
+    <resultMap id="all" type="com.fuse.domain.pojo.CityWeatherEachHour">
+        <id column="locationId" property="location_id"></id>
+        <result column="time" property="time"></result>
+        <result column="temperature" property="temperature"></result>
+        <result column="windDirection" property="wind_direction"></result>
+        <result column="pressure" property="pressure"></result>
+        <result column="windSpeed" property="wind_speed"></result>
+        <result column="humidity" property="humidity"></result>
+    </resultMap>
 
+    <sql id="all_Columns">
+        location_id,`time`,temperature,windDirection,pressure,windSpeed,humidity
+    </sql>
+
+    <insert id="saveOrUpdate" parameterType="com.fuse.domain.pojo.CityWeatherEachHour">
+        insert into city_weather_each_hour
+        values (#{locationId}, #{time}, #{temperature}, #{windDirection}, #{pressure}, #{windSpeed},
+                #{humidity}) ON DUPLICATE KEY
+        UPDATE
+            temperature=#{temperature},
+            wind_direction= #{windDirection},
+            pressure = #{pressure},
+            wind_speed = #{windSpeed},
+            humidity = #{humidity}
+    </insert>
+
+    <insert id="save" parameterType="com.fuse.domain.pojo.CityWeatherEachHour">
+        insert into city_weather_each_hour (location_id, time, temperature, wind_direction, pressure, wind_speed,
+                                            humidity)
+        values (#{locationId}, #{time}, #{temperature}, #{windDirection}, #{pressure}, #{windSpeed}, #{humidity})
+    </insert>
+
+    <select id="get3dWeather" resultType="com.fuse.domain.pojo.CityWeatherEachHour">
+        select
+        <include refid="all_Columns"/>
+        from city_weather_each_hour where `time` >= #{from} &amp;#{to} >= `time` &amp; location_id in #{locationIds}
+    </select>
 
 </mapper>

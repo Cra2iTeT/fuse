@@ -74,8 +74,8 @@ public class ExceptionListener {
         ErrorLog errorLog = BeanUtil.copyProperties(exception, ErrorLog.class);
         errorLog.setLogId(errorLog.getErrorTime() + RandomUtil.randomNumbers(2));
         try {
-            boolean isSave = errorLogMapper.saveErrorLog(errorLog);
-            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, !isSave);
+            int isSave = errorLogMapper.save(errorLog);
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, isSave == 1);
         } catch (IOException e) {
             channel.basicNack(message.getMessageProperties().getDeliveryTag(),
                     false, true);

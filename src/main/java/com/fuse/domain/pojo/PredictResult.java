@@ -12,5 +12,5 @@ public class PredictResult {
     private String region;
     private int fanId;
     private String power;
-    private String YD15;
+    private String yd15;
 }

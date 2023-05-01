@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ErrorLogMapper {
-    boolean saveErrorLog(ErrorLog errorLog);
+    int save(ErrorLog errorLog);
 }
