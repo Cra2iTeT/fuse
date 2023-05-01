@@ -57,7 +57,18 @@ public class ExceptionListener {
         }
     }
 
-    // TODO 消息队列消费异常记录
+
+    @RabbitListener(queues = {RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION})
+    public void ObjectProcess(String msg, Channel channel, Message message) {
+        ObjectException exception = JSONUtil.toBean(msg, ObjectException.class);
+        try {
+            resolveAndSaveToDB(channel, message, exception);
+        } catch (IOException e) {
+            ObjectException newException = new ObjectException(RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION
+                    + " 消息队列消费异常", "IOException.class", e.getMessage());
+            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_OBJECT_EXCEPTION, JSONUtil.toJsonStr(newException));
+        }
+    }
 
     private void resolveAndSaveToDB(Channel channel, Message message, ObjectException exception) throws IOException {
         ErrorLog errorLog = BeanUtil.copyProperties(exception, ErrorLog.class);
