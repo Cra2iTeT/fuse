@@ -5,12 +5,15 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.fuse.config.RabbitmqConfig;
 import com.fuse.config.configure.WeatherConfigure;
 import com.fuse.domain.pojo.ChinaCity;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import com.fuse.exception.WeatherFetchException;
 import com.fuse.mapper.ChinaCityMapper;
 import com.fuse.mapper.CityWeatherEachHourMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -36,18 +39,26 @@ public class WeatherUpdateService {
 
     private final WeatherConfigure weatherConfigure;
 
-    public WeatherUpdateService(ChinaCityMapper chinaCityMapper, CityWeatherEachHourMapper cityWeatherEachHourMapper, @Qualifier("weatherExecutors") ThreadPoolTaskExecutor weatherExecutors, WeatherConfigure weatherConfigure) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public WeatherUpdateService(ChinaCityMapper chinaCityMapper, CityWeatherEachHourMapper cityWeatherEachHourMapper, @Qualifier("weatherExecutors") ThreadPoolTaskExecutor weatherExecutors, WeatherConfigure weatherConfigure, RabbitTemplate rabbitTemplate) {
         this.chinaCityMapper = chinaCityMapper;
         this.cityWeatherEachHourMapper = cityWeatherEachHourMapper;
         this.weatherExecutors = weatherExecutors;
         this.weatherConfigure = weatherConfigure;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
-    public void updateWeather() throws WeatherFetchException {
+    public void updateWeather() {
         List<ChinaCity> chinaCities = fetchChinaCity();
 
-        fetchAllWeather(chinaCities);
+        try {
+            fetchAllWeather(chinaCities);
+        } catch (WeatherFetchException e) {
+            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION,
+                    JSONUtil.toJsonStr(e));
+        }
     }
 
     private List<ChinaCity> fetchChinaCity() {
@@ -57,13 +68,13 @@ public class WeatherUpdateService {
     private void fetchAllWeather(List<ChinaCity> chinaCities) throws WeatherFetchException {
         // 分组
         int citySize = chinaCities.size();
-        int size = Math.max(citySize, 6);
+        int size = Math.min(citySize, 6);
 
         List<Future<Boolean>> futures = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
             int startIdx = citySize / size * i;
-            int endIdx = i != size - 1 ? size / citySize * (i + 1) : citySize;
+            int endIdx = i != size - 1 ? citySize / size * (i + 1) : citySize;
             List<ChinaCity> cities = chinaCities.subList(startIdx, endIdx);
 
             Future<Boolean> submit = weatherExecutors.submit(() -> {
@@ -103,7 +114,7 @@ public class WeatherUpdateService {
 
         String result = HttpUtil.createGet(httpsLink).execute().body();
 
-        return weatherResolver(result,locationId);
+        return weatherResolver(result, locationId);
     }
 
     private List<CityWeatherEachHour> weatherResolver(String result, String locationId) {

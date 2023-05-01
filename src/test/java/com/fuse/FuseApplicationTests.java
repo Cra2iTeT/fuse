@@ -8,12 +8,14 @@ import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.fuse.config.RabbitmqConfig;
 import com.fuse.config.SystemConfig;
 import com.fuse.config.configure.SystemConfigure;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import com.fuse.domain.vo.CsvTimeDivideVo;
 import com.fuse.exception.PythonScriptRunException;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +34,9 @@ class FuseApplicationTests {
 
     @Autowired
     SystemConfigure systemConfigure;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Test
     void test() {
@@ -92,7 +97,7 @@ class FuseApplicationTests {
     }
 
     @Test
-    void test4(){
+    void test4() {
         System.out.println(RandomUtil.randomNumbers(3));
         System.out.println(RandomUtil.randomNumbers(3));
         System.out.println(RandomUtil.randomNumbers(3));
@@ -104,5 +109,12 @@ class FuseApplicationTests {
         File file2 = new File("F:\\Java\\fuse\\dateset" + "\\" + 2 + ".csv");
 
         file.transferTo(file2);
+    }
+
+    @Test
+    void test6() {
+        rabbitTemplate.setMandatory(true);
+        //发送消息
+        rabbitTemplate.convertAndSend(RabbitmqConfig.EXCHANGE_FANOUT_EXCEPTION_LISTENER, "", "2222");
     }
 }

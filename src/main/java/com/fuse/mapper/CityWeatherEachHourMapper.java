@@ -11,5 +11,7 @@ import java.util.List;
  */
 @Mapper
 public interface CityWeatherEachHourMapper {
+
+    // TODO 批量导入sql语句没有写
     boolean saveOrUpdate(List<CityWeatherEachHour> cityWeatherEachHours);
 }
