@@ -11,5 +11,5 @@ public class SystemConfig {
 
     public static final String PYTHON_SCRIPT_Parent_PATH = "F:\\Java\\fuse\\python\\script";
     public static final String PYTHON_SCRIPT_TIME_DIVIDE_PATH = "TimeDivide.py";
-    public static final String CSV_TEMPORARY_SAVE_PATH = "TimeDivide.py";
+    public static final String CSV_TEMPORARY_SAVE_PATH = "F:\\Java\\fuse\\dateset";
 }

@@ -14,4 +14,10 @@ public interface CityWeatherEachHourMapper {
 
     // TODO 批量导入sql语句没有写
     boolean saveOrUpdate(List<CityWeatherEachHour> cityWeatherEachHours);
+
+    List<CityWeatherEachHour> get24hWeather(List<String> locationIds);
+
+    List<CityWeatherEachHour> get48hWeather(List<String> locationIds);
+
+    List<CityWeatherEachHour> get3dWeather(List<String> locationIds);
 }

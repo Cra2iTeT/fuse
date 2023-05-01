@@ -57,7 +57,7 @@ public class CsvResolveServiceImpl implements CsvResolveService {
 
         try {
             CsvTimeDivideVo csvTimeDivideVo = csvResolveByPython();
-            csvTimeDivideVo.setToken(file.getName());
+            csvTimeDivideVo.setToken(path);
             return new R<>(SystemCode.CSV_RESOLVE_SUCCESS.getCode(),
                     SystemCode.SUCCESS.getMsg(), csvTimeDivideVo);
         } catch (PythonScriptRunException e) {

@@ -17,6 +17,10 @@ public class ObjectException extends Exception {
         this("", errorType,"");
     }
 
+    public ObjectException(String errorType, String log) {
+        this("", errorType,errorType);
+    }
+
     public ObjectException(String message, String errorType, String log) {
         super(message);
         this.errorTime = System.currentTimeMillis();

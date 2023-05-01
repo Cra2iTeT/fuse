@@ -39,7 +39,7 @@ class FuseApplicationTests {
     private RabbitTemplate rabbitTemplate;
 
     @Test
-    void test() {
+    void test() throws PythonScriptRunException {
         String[] arguments = new String[]{systemConfigure.getPythonExePath(),
                 SystemConfig.PYTHON_SCRIPT_Parent_PATH + "\\" + SystemConfig.PYTHON_SCRIPT_TIME_DIVIDE_PATH};
         try {
