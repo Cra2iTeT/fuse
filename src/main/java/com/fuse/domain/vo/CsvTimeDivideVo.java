@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CsvTimeDivideVo implements Serializable {
-    private String filename;
+    private String token;
     private long startTime;
     private long endTime;
 }

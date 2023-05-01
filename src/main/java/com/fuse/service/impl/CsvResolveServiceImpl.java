@@ -36,8 +36,15 @@ public class CsvResolveServiceImpl implements CsvResolveService {
     @Override
     public R csvResolve(MultipartFile csv) {
         String temporarySavePath = SystemConfig.CSV_TEMPORARY_SAVE_PATH;
-        String filename = String.valueOf(System.currentTimeMillis() + RandomUtil.randomInt(0, 100));
-        File file = new File(temporarySavePath + "\\" + filename);
+        String filename = System.currentTimeMillis() + "_" + RandomUtil.randomNumbers(3);
+        String path = temporarySavePath + "\\" + filename + ".csv";
+        File file = new File(path);
+
+        if (file.exists()) {
+            filename = System.currentTimeMillis() + RandomUtil.randomNumbers(3) + RandomUtil.randomNumbers(2);
+            path = temporarySavePath + "\\" + filename + ".csv";
+            file = new File(path);
+        }
 
         try {
             csv.transferTo(file);
@@ -47,7 +54,7 @@ public class CsvResolveServiceImpl implements CsvResolveService {
 
         try {
             CsvTimeDivideVo csvTimeDivideVo = csvResolveByPython();
-            csvTimeDivideVo.setFilename(file.getName());
+            csvTimeDivideVo.setToken(file.getName());
             return new R<>(SystemCode.CSV_RESOLVE_SUCCESS.getCode(), SystemCode.SUCCESS.getMsg(), csvTimeDivideVo);
         } catch (PythonScriptRunException | IOException | InterruptedException e) {
             return new R<>(SystemCode.CSV_RESOLVE_ERROR.getCode(), SystemCode.CSV_RESOLVE_ERROR.getMsg(), null);

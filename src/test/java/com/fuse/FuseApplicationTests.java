@@ -2,6 +2,7 @@ package com.fuse;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
@@ -15,8 +16,10 @@ import com.fuse.exception.PythonScriptRunException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -86,5 +89,20 @@ class FuseApplicationTests {
         DateTime parse2 = DateUtil.parse("2023-05-01T02:00+08:00", "yyyy-MM-dd'T'HH:mmXXX");
         System.out.println(parse.getTime());
         System.out.println(parse2.getTime());
+    }
+
+    @Test
+    void test4(){
+        System.out.println(RandomUtil.randomNumbers(3));
+        System.out.println(RandomUtil.randomNumbers(3));
+        System.out.println(RandomUtil.randomNumbers(3));
+    }
+
+    @Test
+    void test5() throws IOException {
+        MultipartFile file = (MultipartFile) new File("F:\\Java\\fuse\\dateset" + "\\" + 1 + ".csv");
+        File file2 = new File("F:\\Java\\fuse\\dateset" + "\\" + 2 + ".csv");
+
+        file.transferTo(file2);
     }
 }
