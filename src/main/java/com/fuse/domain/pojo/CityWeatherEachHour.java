@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CityWeatherEachHour {
+    private String weatherId;
     private String locationId;
     private String locationName;
     private long time;

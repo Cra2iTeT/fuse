@@ -113,7 +113,7 @@ public class AutoPredictService {
     private List<CityWeatherEachHour> transferAndGetWeather(List<ChinaCity> chinaCities) {
         List<CityWeatherEachHour> cityWeatherEachHours = new ArrayList<>();
         chinaCities.forEach(chinaCity -> {
-            List<CityWeatherEachHour> eachHours = fetchWeather(chinaCity.getLocationId());
+            List<CityWeatherEachHour> eachHours = fetchWeather(chinaCity);
             cityWeatherEachHours.addAll(eachHours);
         });
         return cityWeatherEachHours;
@@ -185,15 +185,15 @@ public class AutoPredictService {
                         .saveOrUpdate(cityWeatherEachHour));
     }
 
-    private List<CityWeatherEachHour> fetchWeather(String locationId) {
-        String httpsLink = weatherConfigure.getPrefix() + locationId + "&key=" + weatherConfigure.getKey();
+    private List<CityWeatherEachHour> fetchWeather(ChinaCity chinaCity) {
+        String httpsLink = weatherConfigure.getPrefix() + chinaCity.getLocationId() + "&key=" + weatherConfigure.getKey();
 
         String result = HttpUtil.createGet(httpsLink).execute().body();
 
-        return weatherResolver(result, locationId);
+        return weatherResolver(result, chinaCity);
     }
 
-    private List<CityWeatherEachHour> weatherResolver(String result, String locationId) {
+    private List<CityWeatherEachHour> weatherResolver(String result, ChinaCity chinaCity) {
         JSONObject jsonObject = JSONUtil.parseObj(result);
         JSONArray jsonArray = jsonObject.getJSONArray("hourly");
 
@@ -204,13 +204,14 @@ public class AutoPredictService {
             JSONObject entries = JSONUtil.parseObj(str);
             CityWeatherEachHour cityWeatherEachHour = new CityWeatherEachHour();
 
+            cityWeatherEachHour.setLocationName(chinaCity.getLocationName());
             cityWeatherEachHour.setTime(DateUtil.parse(String.valueOf(entries.get("fxTime")), "yyyy-MM-dd'T'HH:mmXXX").getTime());
-            cityWeatherEachHour.setHumidity(Byte.parseByte(String.valueOf(entries.get("humidity"))));
-            cityWeatherEachHour.setTemperature(Byte.parseByte(String.valueOf(entries.get("temp"))));
+            cityWeatherEachHour.setHumidity(String.valueOf(entries.get("humidity")));
+            cityWeatherEachHour.setTemperature(String.valueOf(entries.get("temp")));
             cityWeatherEachHour.setPressure(Integer.parseInt(String.valueOf(entries.get("pressure"))));
             cityWeatherEachHour.setWindDirection(Integer.parseInt(String.valueOf(entries.get("wind360"))));
-            cityWeatherEachHour.setWindSpeed(Byte.parseByte(String.valueOf(entries.get("windSpeed"))));
-            cityWeatherEachHour.setLocationId(locationId);
+            cityWeatherEachHour.setWindSpeed(String.valueOf(entries.get("windSpeed")));
+            cityWeatherEachHour.setLocationId(chinaCity.getLocationId());
 
             cityWeatherEachHours.add(cityWeatherEachHour);
         }

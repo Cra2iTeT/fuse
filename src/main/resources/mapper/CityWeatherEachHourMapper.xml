@@ -3,7 +3,8 @@
 <mapper namespace="com.fuse.mapper.CityWeatherEachHourMapper">
 
     <resultMap id="all" type="com.fuse.domain.pojo.CityWeatherEachHour">
-        <id column="locationId" property="location_id"></id>
+        <id column="weatherId" property="weather_id"></id>
+        <result column="locationId" property="location_id"></result>
         <result column="locationName" property="location_name"></result>
         <result column="time" property="time"></result>
         <result column="temperature" property="temperature"></result>
@@ -14,12 +15,13 @@
     </resultMap>
 
     <sql id="all_Columns">
-        location_id,location_name,`time`,temperature,wind_direction,pressure,wind_speed,humidity
+        weather_id,location_id,location_name,`time`,temperature,wind_direction,pressure,wind_speed,humidity
     </sql>
 
     <insert id="saveOrUpdate" parameterType="com.fuse.domain.pojo.CityWeatherEachHour">
         insert into city_weather_each_hour
-        values (#{locationId},#{locationName} #{time}, #{temperature}, #{windDirection}, #{pressure}, #{windSpeed},
+        values (#{weather_id}, #{locationId}, #{locationName} #{time}, #{temperature}, #{windDirection}, #{pressure},
+                #{windSpeed},
                 #{humidity}) ON DUPLICATE KEY
         UPDATE
             temperature=#{temperature},
@@ -30,15 +32,17 @@
     </insert>
 
     <insert id="save" parameterType="com.fuse.domain.pojo.CityWeatherEachHour">
-        insert into city_weather_each_hour (location_id, location_name,time, temperature, wind_direction, pressure, wind_speed,
+        insert into city_weather_each_hour (weather_id, location_id, location_name, time, temperature, wind_direction,
+                                            pressure, wind_speed,
                                             humidity)
-        values (#{locationId},#{locationName} #{time}, #{temperature}, #{windDirection}, #{pressure}, #{windSpeed}, #{humidity})
+        values (#{weatherId}, #{locationId}, #{locationName} #{time}, #{temperature}, #{windDirection}, #{pressure},
+                #{windSpeed}, #{humidity})
     </insert>
 
     <select id="get3dWeather" resultType="com.fuse.domain.pojo.CityWeatherEachHour">
         select
         <include refid="all_Columns"/>
-        from city_weather_each_hour where `time` >= #{from} &amp;#{to} >= `time` &amp; location_id in #{locationIds}
+        from city_weather_each_hour where `time` >= #{from} &amp; #{to} >= `time` &amp; location_id in #{locationIds}
     </select>
 
 </mapper>
