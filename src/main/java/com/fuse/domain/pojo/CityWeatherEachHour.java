@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CityWeatherEachHour {
     private String locationId;
+    private String locationName;
     private long time;
-    private byte temperature;
+    private String temperature;
     private int windDirection;
     private int pressure;
-    private byte windSpeed;
-    private byte humidity;
+    private String windSpeed;
+    private String humidity;
 }
