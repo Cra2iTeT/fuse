@@ -3,9 +3,9 @@
 <mapper namespace="com.fuse.mapper.ChinaCityMapper">
 
     <resultMap id="all" type="com.fuse.domain.pojo.ChinaCity">
-        <id column="locationId" property="location_id"></id>
-        <result column="locationNameEn" property="location_name_en"></result>
-        <result column="locationName" property="location_name"></result>
+        <id column="location_id" property="locationId"></id>
+        <result column="location_name_en" property="locationNameEn"></result>
+        <result column="location_name" property="locationName"></result>
     </resultMap>
 
     <sql id="all_Columns">

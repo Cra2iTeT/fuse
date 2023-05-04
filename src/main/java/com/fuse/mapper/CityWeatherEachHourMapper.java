@@ -1,5 +1,6 @@
 package com.fuse.mapper;
 
+import com.fuse.domain.pojo.ChinaCity;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,6 +17,8 @@ public interface CityWeatherEachHourMapper {
     // TODO 批量导入sql语句没有
 
     int saveOrUpdate(CityWeatherEachHour cityWeatherEachHour);
+
+    int saveForEach(List<ChinaCity> cityList);
 
     int save(CityWeatherEachHour cityWeatherEachHour);
 

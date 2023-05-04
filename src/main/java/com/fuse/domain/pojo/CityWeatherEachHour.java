@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
  * @author Cra2iTeT
  * @since 2023/4/30 11:02
@@ -12,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CityWeatherEachHour {
-    private String weatherId;
     private String locationId;
     private String locationName;
     private long time;
+    private Date date;
     private String temperature;
     private int windDirection;
     private int pressure;

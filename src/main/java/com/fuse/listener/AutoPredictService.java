@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,14 +71,14 @@ public class AutoPredictService {
         this.mybatisBatchUtils = mybatisBatchUtils;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
+//    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
     public void updateWeather() {
         List<ChinaCity> chinaCities = fetchChinaCity();
 
         fetchAllWeatherFromNet(chinaCities);
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
+    //    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
     public void autoPredict() {
         List<ChinaCity> chinaCities = fetchChinaCity();
         getWeatherFromDBAndPredict(chinaCities);
@@ -138,21 +139,21 @@ public class AutoPredictService {
             weatherExecutors.execute(() -> {
                 List<CityWeatherEachHour> weather3d = cityWeatherEachHourMapper.get3dWeather(from, to, locationIds);
                 // 根据城市分组
-                Map<String, List<CityWeatherEachHour>> weather3dGroup = weather3d.stream()
-                        .collect(Collectors.groupingBy(CityWeatherEachHour::getLocationId));
+//                Map<String, List<CityWeatherEachHour>> weather3dGroup = weather3d.stream()
+//                        .collect(Collectors.groupingBy(CityWeatherEachHour::getLocationId));
 
-                for (Map.Entry<String, List<CityWeatherEachHour>> stringListEntry : weather3dGroup.entrySet()) {
-                    String path = saveWeatherToCsv(stringListEntry.getValue());
-
-                    List<PredictResult> predictResults = predictByPythonScript(path);
-                    try {
-                        mybatisBatchUtils.batch(predictResults, predictResultMapper.getClass(),
-                                (predictResult, predictResultMapper) -> predictResultMapper.saveOrUpdate(predictResult));
-                    } catch (ObjectException e) {
-                        PredictException exception = new PredictException("预测自动更新失败", e.getMessage());
-                        rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PREDICT_EXCEPTION, JSONUtil.toJsonStr(exception));
-                    }
-                }
+//                for (Map.Entry<String, List<CityWeatherEachHour>> stringListEntry : weather3dGroup.entrySet()) {
+//                    String path = saveWeatherToCsv(stringListEntry.getValue());
+//
+//                    List<PredictResult> predictResults = predictByPythonScript(path);
+//                    try {
+//                        mybatisBatchUtils.batch(predictResults, predictResultMapper.getClass(),
+//                                (predictResult, predictResultMapper) -> predictResultMapper.saveOrUpdate(predictResult));
+//                    } catch (ObjectException e) {
+//                        PredictException exception = new PredictException("预测自动更新失败", e.getMessage());
+//                        rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PREDICT_EXCEPTION, JSONUtil.toJsonStr(exception));
+//                    }
+//                }
             });
         }
     }
@@ -162,6 +163,7 @@ public class AutoPredictService {
         predictTo.setToken(path);
         predictTo.setPredictStartTime(System.currentTimeMillis());
         predictTo.setPredictEndTime(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3);
+
         return predictService.predict(predictTo);
     }
 
@@ -208,6 +210,7 @@ public class AutoPredictService {
             cityWeatherEachHour.setTime(DateUtil.parse(String.valueOf(entries.get("fxTime")), "yyyy-MM-dd'T'HH:mmXXX").getTime());
             cityWeatherEachHour.setHumidity(String.valueOf(entries.get("humidity")));
             cityWeatherEachHour.setTemperature(String.valueOf(entries.get("temp")));
+            cityWeatherEachHour.setDate(DateUtil.date(cityWeatherEachHour.getTime()));
             cityWeatherEachHour.setPressure(Integer.parseInt(String.valueOf(entries.get("pressure"))));
             cityWeatherEachHour.setWindDirection(Integer.parseInt(String.valueOf(entries.get("wind360"))));
             cityWeatherEachHour.setWindSpeed(String.valueOf(entries.get("windSpeed")));

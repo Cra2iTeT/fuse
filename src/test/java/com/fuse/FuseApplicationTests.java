@@ -70,27 +70,6 @@ class FuseApplicationTests {
 
     @Test
     void test2() {
-        String result = HttpUtil.createGet("https://devapi.qweather.com/v7/weather/24h?location=101090101&key=553f1bc8f5f44e079c9ecc0fe82d7bf9").execute().body();
-
-        JSONObject jsonObject = JSONUtil.parseObj(result);
-        JSONArray jsonArray = jsonObject.getJSONArray("hourly");
-        for (Object o : jsonArray) {
-            String str = String.valueOf(o);
-            JSONObject entries = JSONUtil.parseObj(str);
-            CityWeatherEachHour cityWeatherEachHour = new CityWeatherEachHour();
-            System.out.println("------------------------------");
-            cityWeatherEachHour.setTime(DateUtil.parse(String.valueOf(entries.get("fxTime")), "yyyy-MM-dd'T'HH:mmXXX").getTime());
-            cityWeatherEachHour.setHumidity(Byte.parseByte(String.valueOf(entries.get("humidity"))));
-            cityWeatherEachHour.setTemperature(Byte.parseByte(String.valueOf(entries.get("temp"))));
-            cityWeatherEachHour.setPressure(Integer.parseInt(String.valueOf(entries.get("pressure"))));
-            cityWeatherEachHour.setWindDirection(Integer.parseInt(String.valueOf(entries.get("wind360"))));
-            cityWeatherEachHour.setWindSpeed(Byte.parseByte(String.valueOf(entries.get("windSpeed"))));
-            cityWeatherEachHour.setLocationId("101090101");
-            System.out.println(cityWeatherEachHour);
-            System.out.println("------------------------------");
-        }
-
-
     }
 
     @Test
@@ -120,7 +99,7 @@ class FuseApplicationTests {
     void test6() {
         rabbitTemplate.setMandatory(true);
         //发送消息
-        rabbitTemplate.convertAndSend(RabbitmqConfig.EXCHANGE_FANOUT_EXCEPTION_LISTENER, "", "2222");
+        rabbitTemplate.convertAndSend(RabbitmqConfig.EXCHANGE_DIRECT_EXCEPTION_LISTENER, "", "2222");
     }
 
     @Autowired
@@ -130,44 +109,18 @@ class FuseApplicationTests {
     private MybatisBatchUtils mybatisBatchUtils;
 
     @Test
-    void test7() throws ObjectException, InterruptedException {
+    void test7() {
         CityWeatherEachHour eachHour = new CityWeatherEachHour();
         eachHour.setLocationId(System.currentTimeMillis() + "1");
         eachHour.setTime(System.currentTimeMillis());
-        eachHour.setTemperature((byte) 37);
+        eachHour.setLocationName("55");
+        eachHour.setTemperature("37");
         eachHour.setWindDirection(350);
         eachHour.setPressure(1000);
-        eachHour.setWindSpeed((byte) 10);
-        eachHour.setHumidity((byte) 20);
+        eachHour.setWindSpeed("10");
+        eachHour.setHumidity("20");
+        eachHour.setDate(DateUtil.date(eachHour.getTime()));
 
-        cityWeatherEachHourMapper.save(eachHour);
-        Thread.sleep(3000);
-        eachHour.setHumidity((byte) 25);
-
-        CityWeatherEachHour eachHour2 = new CityWeatherEachHour();
-        eachHour2.setLocationId(System.currentTimeMillis() + "2");
-        eachHour2.setTime(System.currentTimeMillis());
-        eachHour2.setTemperature((byte) 38);
-        eachHour2.setWindDirection(350);
-        eachHour2.setPressure(1000);
-        eachHour2.setWindSpeed((byte) 10);
-        eachHour2.setHumidity((byte) 20);
-
-
-        CityWeatherEachHour eachHour3 = new CityWeatherEachHour();
-        eachHour3.setLocationId(System.currentTimeMillis() + "3");
-        eachHour3.setTime(System.currentTimeMillis());
-        eachHour3.setTemperature((byte) 37);
-        eachHour3.setWindDirection(350);
-        eachHour3.setPressure(1000);
-        eachHour3.setWindSpeed((byte) 10);
-        eachHour3.setHumidity((byte) 20);
-
-//        cityWeatherEachHourMapper.save(eachHour);
-
-        List<CityWeatherEachHour> list = new ArrayList<>();
-        list.add(eachHour);
-        list.add(eachHour2);
-        list.add(eachHour3);
+        cityWeatherEachHourMapper.saveOrUpdate(eachHour);
     }
 }
