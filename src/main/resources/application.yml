@@ -37,11 +37,11 @@ mybatis:
   mapper-locations: classpath:/mapper/*.xml
 
 thread-pool:
-  weather:
+  auto:
     core-size: 2
     max-size: 6
     queue-size: 300
-    prefix: weather-Executor-
+    prefix: auto-Executor-
     keep-alive-seconds: 60
 
 weather:

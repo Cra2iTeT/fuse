@@ -2,6 +2,7 @@ package com.fuse.service.impl;
 
 import com.fuse.domain.pojo.PredictResult;
 import com.fuse.domain.to.PredictTo;
+import com.fuse.exception.PythonScriptRunException;
 import com.fuse.service.PredictService;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Service
 public class PredictServiceImpl implements PredictService {
     @Override
-    public List<PredictResult> predict(PredictTo predictTo) {
+    public List<PredictResult> predict(PredictTo predictTo) throws PythonScriptRunException {
         return null;
     }
 }

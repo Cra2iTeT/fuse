@@ -11,5 +11,6 @@ import java.util.List;
  */
 @Mapper
 public interface ChinaCityMapper {
-    List<ChinaCity> getAllChinaCities();
+    List<String> getFanCityIds();
+    List<ChinaCity> getFanCities();
 }

@@ -43,4 +43,10 @@
         from city_weather_each_hour where `time` >= #{from} &amp; #{to} >= `time` &amp; location_id in #{locationIds}
     </select>
 
+    <select id="getWeatherFromTo" resultMap="all">
+        select
+        <include refid="all_Columns"/>
+        from city_weather_each_hour where `time` >= #{from} &amp; #{to} >= `time` &amp; location_id in #{locationIds}
+    </select>
+
 </mapper>

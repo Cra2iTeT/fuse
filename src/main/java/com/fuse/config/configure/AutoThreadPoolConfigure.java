@@ -8,20 +8,20 @@ import org.springframework.context.annotation.Configuration;
  * @since 2023/4/30 11:07
  */
 @Configuration
-public class WeatherThreadPoolConfigure {
-    @Value("${thread-pool.weather.core-size:2}")
+public class AutoThreadPoolConfigure {
+    @Value("${thread-pool.auto.core-size:2}")
     private int coreSize;
 
-    @Value("${thread-pool.weather.max-size:6}")
+    @Value("${thread-pool.auto.max-size:6}")
     private int maxSize;
 
-    @Value("${thread-pool.weather.queue-size:300}")
+    @Value("${thread-pool.auto.queue-size:300}")
     private int queueSize;
 
-    @Value("${thread-pool.weather.prefix:weather-Executor-}")
+    @Value("${thread-pool.auto.prefix:weather-Executor-}")
     private String prefix;
 
-    @Value("${thread-pool.weather.keep-alive-seconds:60}")
+    @Value("${thread-pool.auto.keep-alive-seconds:60}")
     private int keepAliveSeconds;
 
     public int getCoreSize() {

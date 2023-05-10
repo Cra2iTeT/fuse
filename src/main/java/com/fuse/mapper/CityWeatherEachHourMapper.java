@@ -22,5 +22,11 @@ public interface CityWeatherEachHourMapper {
 
     int save(CityWeatherEachHour cityWeatherEachHour);
 
-    List<CityWeatherEachHour> get3dWeather(@Param("from") long from, @Param("to") long to, @Param("locationIds") List<String> locationIds);
+    List<CityWeatherEachHour> get3dWeather(@Param("from") long from,
+                                           @Param("to") long to,
+                                           @Param("locationIds") List<String> locationIds);
+
+    List<CityWeatherEachHour> getWeatherFromTo(@Param("from") long from,
+                                               @Param("to") long to,
+                                               @Param("locationIds") List<String> ids);
 }

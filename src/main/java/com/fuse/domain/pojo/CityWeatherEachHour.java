@@ -11,8 +11,6 @@ import java.util.Date;
  * @since 2023/4/30 11:02
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CityWeatherEachHour {
     private String locationId;
     private String locationName;

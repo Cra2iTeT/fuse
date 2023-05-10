@@ -6,14 +6,19 @@
         <id column="location_id" property="locationId"></id>
         <result column="location_name_en" property="locationNameEn"></result>
         <result column="location_name" property="locationName"></result>
+        <result column="fan_count" property="fanCount"></result>
     </resultMap>
 
     <sql id="all_Columns">
-        location_id,location_name_en,location_name
+        location_id,location_name_en,location_name,fan_count
     </sql>
     
-    <select id="getAllChinaCities" resultMap="all">
-        select <include refid="all_Columns" /> from china_city
+    <select id="getFanCities" resultType="java.lang.String">
+        select location_id from china_city where fan_count > 0
+    </select>
+
+    <select id="getFanCities" resultMap="all">
+        select location_id,location_name from china_city where fan_count > 0
     </select>
 
 </mapper>

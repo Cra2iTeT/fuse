@@ -2,6 +2,8 @@ package com.fuse.domain.pojo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author Cra2iTeT
  * @since 2023/5/1 16:14
@@ -13,4 +15,5 @@ public class PredictResult {
     private int fanId;
     private String power;
     private String yd15;
+    private Date date;
 }

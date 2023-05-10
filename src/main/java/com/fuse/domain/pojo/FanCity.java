@@ -1,17 +1,15 @@
 package com.fuse.domain.pojo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Cra2iTeT
- * @since 2023/4/30 10:49
+ * @since 2023/5/10 10:12
  */
 @Data
-public class ChinaCity {
+public class FanCity {
     private String locationId;
     private String locationNameEn;
     private String locationName;
-    private int fanCount;
+    private int fanId;
 }
