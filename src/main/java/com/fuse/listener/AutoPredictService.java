@@ -50,7 +50,7 @@ public class AutoPredictService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
+//    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
     public void autoPredict() {
         long from = System.currentTimeMillis() + 1000 * 60 * 60 * 12;
         long to = from + 1000 * 60 * 60 * 24 * 3;

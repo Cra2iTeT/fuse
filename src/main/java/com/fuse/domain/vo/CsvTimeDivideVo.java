@@ -11,8 +11,6 @@ import java.io.Serializable;
  * @since 2023/4/29 14:07
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CsvTimeDivideVo implements Serializable {
     private String token;
     private long startTime;

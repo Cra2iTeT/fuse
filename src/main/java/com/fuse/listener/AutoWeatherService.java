@@ -50,7 +50,7 @@ public class AutoWeatherService {
         this.mybatisBatchUtils = mybatisBatchUtils;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
+//    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
     public void autoWeather() {
         List<ChinaCity> chinaCities = chinaCityMapper.getFanCities();
 
