@@ -64,7 +64,8 @@ public class CsvResolveServiceImpl implements CsvResolveService {
             String errorMsg = "python脚本执行错误,请与系统管理员联系";
             ObjectException exception = new ObjectException(errorMsg,
                     "PythonScriptRunException.class", e.getMessage());
-            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PYTHON_SCRIPT_EXCEPTION, JSONUtil.toJsonStr(exception));
+            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PYTHON_SCRIPT_EXCEPTION,
+                    JSONUtil.toJsonStr(exception));
             return new R<>(SystemCode.CSV_RESOLVE_ERROR.getCode(),
                     SystemCode.CSV_RESOLVE_ERROR.getMsg(), null);
         } catch (IOException | InterruptedException e) {
@@ -72,7 +73,8 @@ public class CsvResolveServiceImpl implements CsvResolveService {
         }
     }
 
-    private CsvTimeDivideVo csvResolveByPython() throws PythonScriptRunException, IOException, InterruptedException {
+    private CsvTimeDivideVo csvResolveByPython() throws PythonScriptRunException, IOException,
+            InterruptedException {
         String[] arguments = new String[]{systemConfigure.getPythonExePath(),
                 SystemConfig.PYTHON_SCRIPT_Parent_PATH + "\\" + SystemConfig.PYTHON_SCRIPT_TIME_DIVIDE_PATH};
         try {

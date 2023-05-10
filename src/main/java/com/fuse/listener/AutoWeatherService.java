@@ -110,6 +110,8 @@ public class AutoWeatherService {
         List<CityWeatherEachHour> cityWeatherEachHours = new ArrayList<>();
 
         for (Object o : jsonArray) {
+            // TODO 气象数据异常生产一条异常消息
+
             String str = String.valueOf(o);
             JSONObject entries = JSONUtil.parseObj(str);
             CityWeatherEachHour cityWeatherEachHour = new CityWeatherEachHour();

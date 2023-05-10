@@ -17,9 +17,7 @@ import com.fuse.mapper.CityWeatherEachHourMapper;
 import com.fuse.mapper.FanCityMapper;
 import com.fuse.service.PredictService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -36,8 +34,6 @@ public class AutoPredictService {
 
     private final CityWeatherEachHourMapper cityWeatherEachHourMapper;
 
-    private final ThreadPoolTaskExecutor autoExecutors;
-
     private final PredictService predictService;
 
     private final ChinaCityMapper chinaCityMapper;
@@ -46,11 +42,9 @@ public class AutoPredictService {
 
     public AutoPredictService(FanCityMapper fanCityMapper,
                               CityWeatherEachHourMapper cityWeatherEachHourMapper,
-                              @Qualifier("autoExecutors") ThreadPoolTaskExecutor autoExecutors,
                               PredictService predictService, ChinaCityMapper chinaCityMapper, RabbitTemplate rabbitTemplate) {
         this.fanCityMapper = fanCityMapper;
         this.cityWeatherEachHourMapper = cityWeatherEachHourMapper;
-        this.autoExecutors = autoExecutors;
         this.predictService = predictService;
         this.chinaCityMapper = chinaCityMapper;
         this.rabbitTemplate = rabbitTemplate;
