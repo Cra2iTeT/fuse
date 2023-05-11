@@ -18,3 +18,20 @@
 + 定时从数据库中读取天气数据，自动化预测下一天一整天的数据
 + weatherEachHour使用alias注解设置别名对应csv文件列
 ### 5. 索引建立，时间戳或与时间戳有关的可以创建索引
+
+
+
+## readme
+主要的功能在listener包下
++ AutoWeather，刷新获取天气；原理
+  + 定时任务从数据库中获取所有存在风机的城市，通过和风天气轮询获取近三天的气象数据
+  + 把yaml中的weather.key换成自己的（每日限制1000次）
+  + 获取到气象数据后进行格式解析，存储到数据库中（这里采用的util中的MybatisUtil实现批处理），执行的是saveOrUpdate方法，不存在就保存，存在就更新
+  + *在解析气象数据的时候就可以判断每个数据是否在预期值，不在就可以给mq对应的队列生产一条错误消息，在消息的消费端（ExceptionListener）中向连接的websocket发送一条消息，前端展示错误情况
++ AutoPredict，刷新预测，预测未来三天的功率情况，原理：
+  + 定时任务从数据库中查出所有有风机的城市及未来三天的气象数据，生成csv，把predictTo对象（目前缺少turbId以及region（城市的locationId))传递给python代码，执行python脚本进行预测，预测结果保存到csv中，把csv的路经返回
+  + *读取返回的路径的csv文件，把预测结果存入数据库（同样需要批处理和saveOrUpdate）
++ CsvResolverController，csv文件上传解析
+  + *时间处理没做，也就是上传csv获取到内容中的最大或最小时间，这里建议使用python脚本获取，TimeDivide.py中编写
++ PredictController，主动预测
+  + *执行python脚本进行预测，预测流程与auto类似

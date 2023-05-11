@@ -46,5 +46,5 @@ thread-pool:
 
 weather:
   prefix: https://devapi.qweather.com/v7/weather/24h?location=
-  key: 959a41bc7bdf4a98aa10fbce29a5206d
+  key:
 
