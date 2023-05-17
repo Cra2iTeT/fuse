@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @Data
 public class CsvTimeDivideVo implements Serializable {
+    // 文件绝对路径   F:\Java\fuse\dateset\1.csv
     private String token;
     private long startTime;
     private long endTime;

@@ -10,6 +10,6 @@ import org.springframework.validation.annotation.Validated;
  */
 @Data
 public class PredictTo extends CsvTimeDivideVo {
-    private long predictStartTime;
-    private long predictEndTime;
+    private String region;
+    private int fanId;
 }
