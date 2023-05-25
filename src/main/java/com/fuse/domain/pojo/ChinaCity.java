@@ -1,8 +1,6 @@
 package com.fuse.domain.pojo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Cra2iTeT

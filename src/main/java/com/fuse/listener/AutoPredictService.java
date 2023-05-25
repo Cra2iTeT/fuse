@@ -61,7 +61,7 @@ public class AutoPredictService {
         String path = transferWeatherToCsv(cityWeatherEachHours);
 
         try {
-            predictByPythonScript(path, from, to);
+            predictByPythonScript(path);
         } catch (PythonScriptRunException e) {
             PredictException exception = new PredictException("预测自动更新失败", e.getMessage());
             rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PREDICT_EXCEPTION,
@@ -73,7 +73,7 @@ public class AutoPredictService {
         return cityWeatherEachHourMapper.getWeatherFromTo(from, to, fanCityIds);
     }
 
-    private void predictByPythonScript(String path, long from, long to) throws PythonScriptRunException {
+    private void predictByPythonScript(String path) throws PythonScriptRunException {
         PredictTo predictTo = new PredictTo();
         predictTo.setToken(path);
 

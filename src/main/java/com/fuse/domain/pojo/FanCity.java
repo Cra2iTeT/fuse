@@ -9,7 +9,5 @@ import lombok.Data;
 @Data
 public class FanCity {
     private String locationId;
-    private String locationNameEn;
-    private String locationName;
     private int fanId;
 }
