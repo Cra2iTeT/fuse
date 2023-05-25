@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Cra2iTeT
  * @since 2023/5/1 10:00
  */
-@Configuration
+//@Configuration
 public class RabbitmqConfig {
 
     public static final String EXCHANGE_DIRECT_EXCEPTION_LISTENER = "exchange_direct_exception_listener";

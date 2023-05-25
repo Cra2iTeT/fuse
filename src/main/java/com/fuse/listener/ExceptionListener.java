@@ -23,7 +23,7 @@ import java.io.IOException;
  * @author Cra2iTeT
  * @since 2023/5/1 12:03
  */
-@Component
+//@Component
 public class ExceptionListener {
 
     private final ErrorLogMapper errorLogMapper;

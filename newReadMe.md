@@ -1,0 +1,9 @@
+1.全局异常捕获，捕获到异常以后通过websocket发送消息出去
+
+2.PredictServiceImpl的predict实现
+
+3.AutoWeatherService获取天气信息时风速低于2也通过Websocket发送错误信息
+
+4.预测调用python脚本，参考CsvResolveServiceImpl的csvResolveByPython()，得到的结果是一个csv文件的绝对地址，使用hutool的方法把csv文件存入数据库
+
+5.完善PredictController功能

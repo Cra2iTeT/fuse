@@ -76,8 +76,6 @@ public class AutoPredictService {
     private void predictByPythonScript(String path, long from, long to) throws PythonScriptRunException {
         PredictTo predictTo = new PredictTo();
         predictTo.setToken(path);
-        predictTo.setPredictStartTime(from);
-        predictTo.setPredictEndTime(to);
 
         predictService.predict(predictTo);
     }
