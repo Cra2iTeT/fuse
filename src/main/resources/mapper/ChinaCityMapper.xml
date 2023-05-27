@@ -13,7 +13,7 @@
         location_id,location_name_en,location_name,fan_count
     </sql>
     
-    <select id="getFanCities" resultType="java.lang.String">
+    <select id="getFanCityIds" resultType="java.lang.String">
         select location_id from china_city where fan_count > 0
     </select>
 

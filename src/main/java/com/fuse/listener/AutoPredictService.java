@@ -27,7 +27,7 @@ import java.util.List;
  * @author Cra2iTeT
  * @since 2023/4/30 10:38
  */
-@Component
+//@Component
 public class AutoPredictService {
 
     private FanCityMapper fanCityMapper;

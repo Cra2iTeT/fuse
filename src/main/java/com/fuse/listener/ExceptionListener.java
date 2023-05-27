@@ -23,7 +23,7 @@ import java.io.IOException;
  * @author Cra2iTeT
  * @since 2023/5/1 12:03
  */
-//@Component
+@Component
 public class ExceptionListener {
 
     private final ErrorLogMapper errorLogMapper;
@@ -66,7 +66,7 @@ public class ExceptionListener {
         }
     }
 
-    @RabbitListener(queues = {RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION})
+    //    @RabbitListener(queues = {RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION})
     public void ObjectProcess(String msg, Channel channel, Message message) {
         ObjectException exception = JSONUtil.toBean(msg, ObjectException.class);
         try {
