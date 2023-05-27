@@ -11,5 +11,7 @@ public class ErrorLog {
     private String logId;
     private long errorTime;
     private String errorMsg;
+    private byte errorCode;
     private String errorType;
+    private String log;
 }

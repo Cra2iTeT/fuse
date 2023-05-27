@@ -47,7 +47,7 @@ public class MybatisBatchUtils {
             batchSqlSession.commit(!TransactionSynchronizationManager.isSynchronizationActive());
         } catch (Exception e) {
             batchSqlSession.rollback();
-            throw new ObjectException(e.getMessage());
+            throw new ObjectException("批量操作异常", e.getMessage());
         } finally {
             batchSqlSession.close();
         }

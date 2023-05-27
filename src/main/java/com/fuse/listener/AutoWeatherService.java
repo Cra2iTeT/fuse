@@ -10,6 +10,7 @@ import com.fuse.config.configure.WeatherConfigure;
 import com.fuse.domain.pojo.ChinaCity;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import com.fuse.exception.ObjectException;
+import com.fuse.exception.WeatherException;
 import com.fuse.exception.WeatherFetchException;
 import com.fuse.mapper.ChinaCityMapper;
 import com.fuse.mapper.CityWeatherEachHourMapper;
@@ -18,6 +19,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.List;
  * @author Cra2iTeT
  * @since 2023/5/10 10:01
  */
+@Component
 public class AutoWeatherService {
 
     private final ChinaCityMapper chinaCityMapper;
@@ -50,7 +53,7 @@ public class AutoWeatherService {
         this.mybatisBatchUtils = mybatisBatchUtils;
     }
 
-//    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
+    //    @Scheduled(fixedRate = 1000 * 60 * 60 * 22)
     public void autoWeather() {
         List<ChinaCity> chinaCities = chinaCityMapper.getFanCities();
 
@@ -72,7 +75,8 @@ public class AutoWeatherService {
                 try {
                     saveOrUpdateToDB(cityWeatherEachHours);
                 } catch (ObjectException e) {
-                    WeatherFetchException exception = new WeatherFetchException("从网络中获取天气，更新到数据库时异常", e.getMessage());
+                    WeatherFetchException exception = new
+                            WeatherFetchException("从网络中获取天气，更新到数据库时异常", e.getMessage());
                     rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION,
                             JSONUtil.toJsonStr(exception));
                 }
@@ -96,7 +100,8 @@ public class AutoWeatherService {
     }
 
     private List<CityWeatherEachHour> fetchWeather(ChinaCity chinaCity) {
-        String httpsLink = weatherConfigure.getPrefix() + chinaCity.getLocationId() + "&key=" + weatherConfigure.getKey();
+        String httpsLink = weatherConfigure.getPrefix() +
+                chinaCity.getLocationId() + "&key=" + weatherConfigure.getKey();
 
         String result = HttpUtil.createGet(httpsLink).execute().body();
 
@@ -110,23 +115,38 @@ public class AutoWeatherService {
         List<CityWeatherEachHour> cityWeatherEachHours = new ArrayList<>();
 
         for (Object o : jsonArray) {
-            // TODO 气象数据异常生产一条异常消息
+            try {
+                String str = String.valueOf(o);
+                JSONObject entries = JSONUtil.parseObj(str);
+                CityWeatherEachHour cityWeatherEachHour = new CityWeatherEachHour();
 
-            String str = String.valueOf(o);
-            JSONObject entries = JSONUtil.parseObj(str);
-            CityWeatherEachHour cityWeatherEachHour = new CityWeatherEachHour();
+                cityWeatherEachHour.setLocationName(chinaCity.getLocationName());
+                cityWeatherEachHour.setTime(DateUtil.parse(String.valueOf(entries.get("fxTime")),
+                        "yyyy-MM-dd'T'HH:mmXXX").getTime());
+                cityWeatherEachHour.setHumidity(String.valueOf(entries.get("humidity")));
+                cityWeatherEachHour.setTemperature(String.valueOf(entries.get("temp")));
+                cityWeatherEachHour.setDate(DateUtil.date(cityWeatherEachHour.getTime()));
+                cityWeatherEachHour.setPressure(Integer.parseInt(String.valueOf(entries.get("pressure"))));
+                cityWeatherEachHour.setWindDirection(Integer.parseInt(String.valueOf(entries.get("wind360"))));
+                cityWeatherEachHour.setWindSpeed(String.valueOf(entries.get("windSpeed")));
+                cityWeatherEachHour.setLocationId(chinaCity.getLocationId());
 
-            cityWeatherEachHour.setLocationName(chinaCity.getLocationName());
-            cityWeatherEachHour.setTime(DateUtil.parse(String.valueOf(entries.get("fxTime")), "yyyy-MM-dd'T'HH:mmXXX").getTime());
-            cityWeatherEachHour.setHumidity(String.valueOf(entries.get("humidity")));
-            cityWeatherEachHour.setTemperature(String.valueOf(entries.get("temp")));
-            cityWeatherEachHour.setDate(DateUtil.date(cityWeatherEachHour.getTime()));
-            cityWeatherEachHour.setPressure(Integer.parseInt(String.valueOf(entries.get("pressure"))));
-            cityWeatherEachHour.setWindDirection(Integer.parseInt(String.valueOf(entries.get("wind360"))));
-            cityWeatherEachHour.setWindSpeed(String.valueOf(entries.get("windSpeed")));
-            cityWeatherEachHour.setLocationId(chinaCity.getLocationId());
+                cityWeatherEachHours.add(cityWeatherEachHour);
 
-            cityWeatherEachHours.add(cityWeatherEachHour);
+                // 温度异常
+                if (Integer.parseInt(cityWeatherEachHour.getTemperature()) < -10) {
+                    WeatherException exception = new
+                            WeatherException(chinaCity.getLocationName() + "市，温度异常。"
+                            + cityWeatherEachHour.getDate() + "温度：" + cityWeatherEachHour.getTemperature());
+                    rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_EXCEPTION,
+                            JSONUtil.toJsonStr(exception));
+                }
+            } catch (RuntimeException e) {
+                WeatherFetchException exception = new
+                        WeatherFetchException("从网络中获取天气异常", e.getMessage());
+                rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION,
+                        JSONUtil.toJsonStr(exception));
+            }
         }
 
         return cityWeatherEachHours;

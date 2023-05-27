@@ -123,4 +123,9 @@ class FuseApplicationTests {
 
         cityWeatherEachHourMapper.saveOrUpdate(eachHour);
     }
+
+    @Test
+    void test8(){
+        System.out.println(IOException.class.getName());
+    }
 }

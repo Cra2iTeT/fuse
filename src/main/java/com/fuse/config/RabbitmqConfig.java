@@ -18,6 +18,9 @@ public class RabbitmqConfig {
     public static final String QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION = "exception_listener-weather_fetch";
     public static final String ROUTINGKEY_WEATHER_FETCH_EXCEPTION = "exception.listener.weather_fetch";
 
+    public static final String QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION = "exception_listener-weather";
+    public static final String ROUTINGKEY_WEATHER_EXCEPTION = "exception.listener.weather";
+
     public static final String QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION = "exception_listener-predict";
     public static final String ROUTINGKEY_PREDICT_EXCEPTION = "exception.listener.predict";
 
@@ -37,6 +40,11 @@ public class RabbitmqConfig {
     @Bean(QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION)
     public Queue QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION() {
         return new Queue(QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION);
+    }
+
+    @Bean(QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION)
+    public Queue QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION() {
+        return new Queue(QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION);
     }
 
     @Bean(QUEUE_EXCEPTION_LISTENER_PREDICT_EXCEPTION)
@@ -71,6 +79,14 @@ public class RabbitmqConfig {
             @Qualifier(EXCHANGE_DIRECT_EXCEPTION_LISTENER) Exchange exchange) {
         return BindingBuilder.bind(queue).to(exchange)
                 .with(ROUTINGKEY_WEATHER_FETCH_EXCEPTION).noargs();
+    }
+
+    @Bean
+    public Binding BINDING_QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION(
+            @Qualifier(QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION) Queue queue,
+            @Qualifier(EXCHANGE_DIRECT_EXCEPTION_LISTENER) Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange)
+                .with(ROUTINGKEY_WEATHER_EXCEPTION).noargs();
     }
 
     @Bean

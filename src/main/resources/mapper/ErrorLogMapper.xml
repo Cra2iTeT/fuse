@@ -3,13 +3,15 @@
 <mapper namespace="com.fuse.mapper.ErrorLogMapper">
 
     <insert id="save" parameterType="com.fuse.domain.pojo.ErrorLog">
-        insert into error_log (log_id, error_time, error_msg, error_type)
-        values (#{logId}, #{errorTime}, #{errorMsg}, #{errorType}) ON DUPLICATE KEY
+        insert into error_log (log_id, error_time, error_msg,error_code, error_type,log)
+        values (#{logId}, #{errorTime}, #{errorMsg}, #{errorType},#{log},#{errorCode}) ON DUPLICATE KEY
         UPDATE
             log_id=#{logId},
             error_time= #{errorTime},
             error_msg = #{errorMsg},
-            error_type = #{errorType}
+            error_type = #{errorType},
+            log = #{log},
+            error_code = #{errorCode}
     </insert>
 
 </mapper>
