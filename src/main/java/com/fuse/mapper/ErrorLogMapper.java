@@ -1,7 +1,11 @@
 package com.fuse.mapper;
 
 import com.fuse.domain.pojo.ErrorLog;
+import com.fuse.exception.ObjectException;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author Cra2iTeT
@@ -10,4 +14,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ErrorLogMapper {
     int save(ErrorLog errorLog);
+
+    List<ErrorLog> getExceptionPage(@Param("code") byte code,
+                                           @Param("current") int current,
+                                           @Param("pageSize") int pageSize);
 }

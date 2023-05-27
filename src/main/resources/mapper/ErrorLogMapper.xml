@@ -3,8 +3,8 @@
 <mapper namespace="com.fuse.mapper.ErrorLogMapper">
 
     <insert id="save" parameterType="com.fuse.domain.pojo.ErrorLog">
-        insert into error_log (log_id, error_time, error_msg,error_code, error_type,log)
-        values (#{logId}, #{errorTime}, #{errorMsg}, #{errorType},#{log},#{errorCode}) ON DUPLICATE KEY
+        insert into error_log (log_id, error_time, error_msg, error_code, error_type, log)
+        values (#{logId}, #{errorTime}, #{errorMsg}, #{errorType}, #{log}, #{errorCode}) ON DUPLICATE KEY
         UPDATE
             log_id=#{logId},
             error_time= #{errorTime},
@@ -13,5 +13,12 @@
             log = #{log},
             error_code = #{errorCode}
     </insert>
+
+    <select id="getExceptionPage" resultType="com.fuse.domain.pojo.ErrorLog">
+        select log_id, error_time, error_msg, error_code, error_type, log
+        from error_log
+        where error_code = #{code}
+        order by error_time desc limit #{current}, #{pageSize}
+    </select>
 
 </mapper>
