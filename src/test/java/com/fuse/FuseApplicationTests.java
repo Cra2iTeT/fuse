@@ -125,7 +125,15 @@ class FuseApplicationTests {
     }
 
     @Test
-    void test8(){
+    void test8() {
         System.out.println(IOException.class.getName());
+    }
+
+    @Test
+    void test9() {
+        File file = new File("F:\\Java\\fuse\\sql\\fuse.sql");
+        System.out.println(file.getName());
+        System.out.println(file.getAbsolutePath());
+        System.out.println(file.getPath());
     }
 }

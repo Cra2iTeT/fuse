@@ -8,7 +8,6 @@ import cn.hutool.json.JSONUtil;
 import com.fuse.config.RabbitmqConfig;
 import com.fuse.config.SystemConfig;
 import com.fuse.domain.pojo.CityWeatherEachHour;
-import com.fuse.domain.pojo.FanCity;
 import com.fuse.domain.to.PredictTo;
 import com.fuse.exception.PredictException;
 import com.fuse.exception.PythonScriptRunException;
@@ -17,8 +16,6 @@ import com.fuse.mapper.CityWeatherEachHourMapper;
 import com.fuse.mapper.FanCityMapper;
 import com.fuse.service.PredictService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +39,9 @@ public class AutoPredictService {
 
     public AutoPredictService(FanCityMapper fanCityMapper,
                               CityWeatherEachHourMapper cityWeatherEachHourMapper,
-                              PredictService predictService, ChinaCityMapper chinaCityMapper, RabbitTemplate rabbitTemplate) {
+                              PredictService predictService,
+                              ChinaCityMapper chinaCityMapper,
+                              RabbitTemplate rabbitTemplate) {
         this.fanCityMapper = fanCityMapper;
         this.cityWeatherEachHourMapper = cityWeatherEachHourMapper;
         this.predictService = predictService;
@@ -50,12 +49,11 @@ public class AutoPredictService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-//    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
+    //    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
     public void autoPredict() {
         long from = System.currentTimeMillis() + 1000 * 60 * 60 * 12;
         long to = from + 1000 * 60 * 60 * 24 * 3;
 
-        List<FanCity> fanCities = fanCityMapper.getAllFans();
         List<String> fanCityIds = chinaCityMapper.getFanCityIds();
         List<CityWeatherEachHour> cityWeatherEachHours = getWeatherFromDB(fanCityIds, from, to);
         String path = transferWeatherToCsv(cityWeatherEachHours);
@@ -74,6 +72,7 @@ public class AutoPredictService {
     }
 
     private void predictByPythonScript(String path) throws PythonScriptRunException {
+        // TODO predict 内容补全
         PredictTo predictTo = new PredictTo();
         predictTo.setToken(path);
 

@@ -11,7 +11,7 @@
  Target Server Version : 80026
  File Encoding         : 65001
 
- Date: 25/05/2023 14:52:56
+ Date: 28/05/2023 22:01:11
 */
 
 SET NAMES utf8mb4;
@@ -6148,6 +6148,7 @@ CREATE TABLE `error_log`  (
   `log_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `error_time` bigint(0) NOT NULL COMMENT '出错时间',
   `error_msg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '错误信息',
+  `error_code` tinyint(0) NOT NULL,
   `error_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `log` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`log_id`) USING BTREE
