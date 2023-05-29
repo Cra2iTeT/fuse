@@ -9,7 +9,6 @@ import com.fuse.exception.ObjectException;
 import com.fuse.exception.PythonScriptRunException;
 import com.fuse.service.PredictService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +57,7 @@ public class PredictController {
         return new R<>(SystemCode.ERROR.getCode(), SystemCode.ERROR.getMsg());
     }
 
+    @PostMapping
     public R predictByMultiModel(@RequestBody PredictTo predictTo) {
         try {
             return predictService.predict(predictTo);

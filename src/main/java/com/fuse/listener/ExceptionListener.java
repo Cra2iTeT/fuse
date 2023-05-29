@@ -41,7 +41,7 @@ public class ExceptionListener {
         PythonScriptRunException pythonScriptRunException = JSONUtil
                 .toBean(msg, PythonScriptRunException.class);
         try {
-            WebSocketService.sendGroupMessage(new R(SystemCode.PYTHON_SCRIPT_ERROR.getCode(),
+            WebSocketService.sendMessageToAll(new R(SystemCode.PYTHON_SCRIPT_ERROR.getCode(),
                     SystemCode.PYTHON_SCRIPT_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, pythonScriptRunException);
         } catch (IOException e) {
@@ -56,7 +56,7 @@ public class ExceptionListener {
     public void weatherFetchProcess(String msg, Channel channel, Message message) {
         WeatherFetchException weatherFetchException = JSONUtil.toBean(msg, WeatherFetchException.class);
         try {
-            WebSocketService.sendGroupMessage(new R(SystemCode.WEATHER_ERROR.getCode(),
+            WebSocketService.sendMessageToAll(new R(SystemCode.WEATHER_ERROR.getCode(),
                     SystemCode.WEATHER_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, weatherFetchException);
         } catch (IOException e) {
@@ -71,7 +71,7 @@ public class ExceptionListener {
     public void weatherProcess(String msg, Channel channel, Message message) {
         WeatherException weatherException = JSONUtil.toBean(msg, WeatherException.class);
         try {
-            WebSocketService.sendGroupMessage(new R(SystemCode.WEATHER_ERROR.getCode(),
+            WebSocketService.sendMessageToAll(new R(SystemCode.WEATHER_ERROR.getCode(),
                     SystemCode.WEATHER_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, weatherException);
         } catch (IOException e) {
@@ -86,7 +86,7 @@ public class ExceptionListener {
     public void ObjectProcess(String msg, Channel channel, Message message) {
         ObjectException exception = JSONUtil.toBean(msg, ObjectException.class);
         try {
-            WebSocketService.sendGroupMessage(new R(SystemCode.MQ_ERROR.getCode(),
+            WebSocketService.sendMessageToAll(new R(SystemCode.MQ_ERROR.getCode(),
                     SystemCode.MQ_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, exception);
         } catch (IOException e) {

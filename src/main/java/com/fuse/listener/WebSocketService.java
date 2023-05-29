@@ -31,26 +31,16 @@ public class WebSocketService {
 
     private Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
-    private Session session;
-
     @OnOpen
     public void onOpen(Session session) {
-        this.session = session;
         sessions.add(session);
         webSocketSet.add(this);
         logger.info("webSocket连接成功！");
-        sendMessage(new R<>(SystemCode.WEBSOCKET_CONNECT_OPEN.getCode(),
-                SystemCode.WEBSOCKET_CONNECT_OPEN.getMsg(), null));
     }
 
     @OnClose
     public void onClose() {
         webSocketSet.remove(this);
-    }
-
-    //这个session为null
-    public void sendMessage(R r) {
-        this.session.getAsyncRemote().sendText(JSONUtil.toJsonStr(r));
     }
 
     @OnMessage
@@ -65,12 +55,6 @@ public class WebSocketService {
             if (session.isOpen()) {
                 session.getBasicRemote().sendText(r.getMsg());
             }
-        }
-    }
-
-    public static void sendGroupMessage(R r) {
-        for (WebSocketService webSocketService : webSocketSet) {
-            webSocketService.sendMessage(r);
         }
     }
 
