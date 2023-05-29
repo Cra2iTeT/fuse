@@ -1,4 +1,7 @@
 1.全局异常捕获，捕获到异常以后通过websocket发送消息出去
+    ①云服务docker 启动 mysql、rabbitMQ容器
+    ②完善WebSocketService功能，并在异常处理中广播消息
+    ③自定义异常处理
 
 2.PredictServiceImpl的predict实现
 

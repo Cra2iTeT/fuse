@@ -9,14 +9,14 @@ spring:
       matching-strategy: ant-path-matcher
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.150.13:3306/fuse?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+    url: jdbc:mysql://82.157.49.103:3307/fuse?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
     username: root
-    password: 123456
+    password: root
   rabbitmq:
-    host: 192.168.150.13
+    host: 82.157.49.103
     port: 5672
     username: root
-    password: 123456
+    password: root
     virtual-host: /
     listener:
       direct:

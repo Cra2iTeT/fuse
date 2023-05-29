@@ -2,6 +2,7 @@ package com.fuse.service;
 
 import com.fuse.domain.pojo.PredictResult;
 import com.fuse.domain.to.PredictTo;
+import com.fuse.exception.ObjectException;
 import com.fuse.exception.PythonScriptRunException;
 
 import java.util.List;
@@ -12,4 +13,6 @@ import java.util.List;
  */
 public interface PredictService {
     List<PredictResult> predict(PredictTo predictTo) throws PythonScriptRunException;
+
+    void sendWebSocket() throws ObjectException;
 }

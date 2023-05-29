@@ -6,7 +6,7 @@ import com.fuse.common.ExceptionCode;
  * @author Cra2iTeT
  * @since 2023/5/1 11:49
  */
-public class ObjectException extends Exception {
+public class ObjectException extends RuntimeException {
 
     private long errorTime;
     private String errorType;
