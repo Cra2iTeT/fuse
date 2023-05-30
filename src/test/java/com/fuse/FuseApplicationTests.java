@@ -141,15 +141,12 @@ class FuseApplicationTests {
         System.out.println(IOException.class.getName());
     }
 
-    @Test
-    void test9() throws ObjectException {
-        String path = "D:\\idea1\\fuse\\dateset\\out.csv";
-        predictServiceImpl.loadCsv2Database(path);
-    }
+
 
     @Test
     void test10() throws IOException, InterruptedException, ObjectException {
         PredictTo predictTo = new PredictTo();
+        predictTo.setRegion("北京");
         predictTo.setToken("D:\\idea1\\fuse\\dateset\\out.csv");
         predictService.predict(predictTo);
     }

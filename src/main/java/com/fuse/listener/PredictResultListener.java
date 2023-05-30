@@ -20,6 +20,16 @@ public class PredictResultListener extends AnalysisEventListener<PredictResult> 
 
     private Logger logger = LoggerFactory.getLogger(PredictResultListener.class);
 
+    private String location;
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
     @Autowired
     private PredictResultMapper predictResultMapper;
 
@@ -27,6 +37,7 @@ public class PredictResultListener extends AnalysisEventListener<PredictResult> 
     public void invoke(PredictResult predictResult, AnalysisContext analysisContext) {
         //填充Date属性
         predictResult.setDate(predictResult.getDatetime());
+        predictResult.setRegion(this.location);
         logger.info("读取到一条信息:{}", predictResult);
         predictResultMapper.saveOrUpdate(predictResult);
     }

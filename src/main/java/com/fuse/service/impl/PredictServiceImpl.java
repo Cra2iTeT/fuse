@@ -34,6 +34,8 @@ import static com.fuse.config.SystemConfig.CSV_TEMPORARY_SAVE_PATH;
 @Service
 public class PredictServiceImpl implements PredictService {
 
+
+
     @Autowired
     private PredictResultListener predictResultListener;
 
@@ -108,13 +110,15 @@ public class PredictServiceImpl implements PredictService {
             throw new PythonScriptRunException("python脚本执行错误,请与系统管理员联系");
         }
         //转储csv
-        loadCsv2Database(predictTo.getToken());
+        loadCsv2Database(predictTo.getToken(),predictTo.getRegion());
         return new R(SUCCESS.getCode(),SUCCESS.getMsg());
     }
 
     //导入csv
-    public void loadCsv2Database(String path) throws ObjectException {
+    public void loadCsv2Database(String path,String location) throws ObjectException {
         try{
+
+            predictResultListener.setLocation(location);
             EasyExcel.read(path, PredictResult.class, predictResultListener).doReadAll();
         }catch (Exception e){
             throw new ObjectException(CSV_LOAD_ERROR.getMsg());
