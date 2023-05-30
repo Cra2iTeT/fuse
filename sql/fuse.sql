@@ -6201,15 +6201,14 @@ INSERT INTO `fan_city` VALUES ('101100201', 1);
 -- ----------------------------
 -- Table structure for predict_result
 -- ----------------------------
-DROP TABLE IF EXISTS `predict_result`;
-CREATE TABLE `predict_result`  (
-  `time` bigint(0) NOT NULL,
-  `region` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `fan_id` int(0) NOT NULL COMMENT '风机id',
-  `power` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `yd_15` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `date` datetime(0) NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+CREATE TABLE `predict_result` (
+                                  `time` datetime NOT NULL,
+                                  `region` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+                                  `fan_id` int NOT NULL COMMENT '风机id',
+                                  `power` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+                                  `yd_15` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+                                  `date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of predict_result

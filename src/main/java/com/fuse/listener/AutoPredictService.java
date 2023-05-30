@@ -9,6 +9,7 @@ import com.fuse.config.RabbitmqConfig;
 import com.fuse.config.SystemConfig;
 import com.fuse.domain.pojo.CityWeatherEachHour;
 import com.fuse.domain.to.PredictTo;
+import com.fuse.exception.ObjectException;
 import com.fuse.exception.PredictException;
 import com.fuse.exception.PythonScriptRunException;
 import com.fuse.mapper.ChinaCityMapper;
@@ -18,6 +19,7 @@ import com.fuse.service.PredictService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -60,7 +62,7 @@ public class AutoPredictService {
 
         try {
             predictByPythonScript(path);
-        } catch (PythonScriptRunException e) {
+        } catch (ObjectException | IOException | InterruptedException e) {
             PredictException exception = new PredictException("预测自动更新失败", e.getMessage());
             rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_PREDICT_EXCEPTION,
                     JSONUtil.toJsonStr(exception));
@@ -71,7 +73,7 @@ public class AutoPredictService {
         return cityWeatherEachHourMapper.getWeatherFromTo(from, to, fanCityIds);
     }
 
-    private void predictByPythonScript(String path) throws PythonScriptRunException {
+    private void predictByPythonScript(String path) throws ObjectException, IOException, InterruptedException {
         // TODO predict 内容补全
         PredictTo predictTo = new PredictTo();
         predictTo.setToken(path);

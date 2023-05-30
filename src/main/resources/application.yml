@@ -29,7 +29,7 @@ spring:
           enabled: true # 是否支持重试
 
 python:
-  exe-path: D:\dev\Python\Python39\python.exe
+  exe-path: C:\Users\CLD\AppData\Local\Programs\Python\Python39\python.exe
 
 mybatis:
   configuration:

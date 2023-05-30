@@ -61,7 +61,7 @@ public class PredictController {
     public R predictByMultiModel(@RequestBody PredictTo predictTo) {
         try {
             return predictService.predict(predictTo);
-        } catch (PythonScriptRunException e) {
+        } catch (ObjectException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

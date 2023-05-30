@@ -38,14 +38,16 @@ public class WebSocketService {
         this.session = session;
         sessions.add(session);
         webSocketSet.add(this);
-        logger.info("webSocket连接成功！");
+        logger.info("webSocket 连接成功！");
         sendMessage(new R<>(SystemCode.WEBSOCKET_CONNECT_OPEN.getCode(),
                 SystemCode.WEBSOCKET_CONNECT_OPEN.getMsg(), null));
     }
 
     @OnClose
-    public void onClose() {
+    public void onClose(Session session) {
         webSocketSet.remove(this);
+        sessions.remove(session);
+        logger.info("WebSocket 连接关闭！");
     }
 
     //这个session为null

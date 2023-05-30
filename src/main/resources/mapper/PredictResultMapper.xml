@@ -3,8 +3,15 @@
 <mapper namespace="com.fuse.mapper.PredictResultMapper">
 
     <insert id="saveOrUpdate" parameterType="com.fuse.domain.pojo.PredictResult">
-        insert into predict_result (`time`, region, fan_id, power, yd15,`date`)
-        values (#{time}, #{region}, #{fanId}, #{power}, #{yd15},,#{date})
+        insert into predict_result (`time`, region, fan_id, power, yd_15,`date`)
+        values (#{datetime}, #{region}, #{fanId}, #{power}, #{yd15},#{date}) ON DUPLICATE KEY
+        update
+            `time` = #{datetime},
+            region = #{region},
+            fan_id = #{fanId},
+            power = #{power},
+            yd_15 = #{yd15},
+            `date` = #{date}
     </insert>
 
 </mapper>

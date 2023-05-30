@@ -9,6 +9,7 @@ public enum SystemCode {
     CSV_RESOLVE_ERROR_TYPE_MISMATCH(10001, "只能上传CSV文件"),
     CSV_RESOLVE_SUCCESS(10002, "CSV文件解析成功"),
     CSV_RESOLVE_ERROR(10003, "CSV文件解析失败，请联系系统管理员"),
+    CSV_LOAD_ERROR(10004, "CSV文件导入，请联系系统管理员"),
     PYTHON_SCRIPT_ERROR(10103, "python脚本执行异常，请联系管理员"),
     WEATHER_ERROR(10203, "天气脚本异常，请联系管理员"),
     MQ_ERROR(20003, "消息管理异常，请联系管理员"),

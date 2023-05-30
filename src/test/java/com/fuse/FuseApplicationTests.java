@@ -13,10 +13,13 @@ import com.fuse.config.RabbitmqConfig;
 import com.fuse.config.SystemConfig;
 import com.fuse.config.configure.SystemConfigure;
 import com.fuse.domain.pojo.CityWeatherEachHour;
+import com.fuse.domain.to.PredictTo;
 import com.fuse.domain.vo.CsvTimeDivideVo;
 import com.fuse.exception.ObjectException;
 import com.fuse.exception.PythonScriptRunException;
 import com.fuse.mapper.CityWeatherEachHourMapper;
+import com.fuse.service.PredictService;
+import com.fuse.service.impl.PredictServiceImpl;
 import com.fuse.util.MybatisBatchUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -42,6 +45,15 @@ class FuseApplicationTests {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private PredictServiceImpl predictServiceImpl;
+
+
+    @Autowired
+    private PredictService predictService;
+
+
 
     @Test
     void test() throws PythonScriptRunException {
@@ -130,10 +142,19 @@ class FuseApplicationTests {
     }
 
     @Test
-    void test9() {
-        File file = new File("F:\\Java\\fuse\\sql\\fuse.sql");
-        System.out.println(file.getName());
-        System.out.println(file.getAbsolutePath());
-        System.out.println(file.getPath());
+    void test9() throws ObjectException {
+        String path = "D:\\idea1\\fuse\\dateset\\out.csv";
+        predictServiceImpl.loadCsv2Database(path);
     }
+
+    @Test
+    void test10() throws IOException, InterruptedException, ObjectException {
+        PredictTo predictTo = new PredictTo();
+        predictTo.setToken("D:\\idea1\\fuse\\dateset\\out.csv");
+        predictService.predict(predictTo);
+    }
+
+
+
+
 }

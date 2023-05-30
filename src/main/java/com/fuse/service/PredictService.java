@@ -3,6 +3,7 @@ package com.fuse.service;
 import com.fuse.domain.pojo.PredictResult;
 import com.fuse.domain.to.PredictTo;
 import com.fuse.domain.vo.R;
+import com.fuse.exception.ObjectException;
 import com.fuse.exception.PythonScriptRunException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,5 +17,5 @@ import java.util.List;
 public interface PredictService {
     R csvResolve(MultipartFile csv) throws PythonScriptRunException, IOException, InterruptedException;
 
-    R predict(PredictTo predictTo) throws PythonScriptRunException;
+    R predict(PredictTo predictTo) throws ObjectException, IOException, InterruptedException;
 }
