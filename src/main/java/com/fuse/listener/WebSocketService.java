@@ -39,8 +39,10 @@ public class WebSocketService {
     }
 
     @OnClose
-    public void onClose() {
+    public void onClose(Session session) {
         webSocketSet.remove(this);
+        sessions.remove(session);
+        logger.info("WebSocket 连接关闭！");
     }
 
     @OnMessage

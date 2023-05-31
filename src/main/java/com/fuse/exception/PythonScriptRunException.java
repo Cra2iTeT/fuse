@@ -1,6 +1,6 @@
 package com.fuse.exception;
 
-import com.fuse.common.ExceptionCode;
+import static com.fuse.common.ExceptionCode.PYTHON_SCRIPT_EXCEPTION;
 
 /**
  * @author Cra2iTeT
@@ -14,6 +14,6 @@ public class PythonScriptRunException extends ObjectException {
 
     public PythonScriptRunException(String message, String log) {
         super(message, PythonScriptRunException.class.getName(),
-                ExceptionCode.PYTHON_SCRIPT_EXCEPTION, log);
+                PYTHON_SCRIPT_EXCEPTION, log);
     }
 }

@@ -1,6 +1,6 @@
 package com.fuse.exception;
 
-import com.fuse.common.ExceptionCode;
+import static com.fuse.common.ExceptionCode.WEATHER_EXCEPTION;
 
 /**
  * @author Cra2iTeT
@@ -9,11 +9,10 @@ import com.fuse.common.ExceptionCode;
 public class WeatherException extends ObjectException {
 
     public WeatherException(String message) {
-        this(message,"");
+        this(message, "");
     }
 
     public WeatherException(String message, String log) {
-        super(message, WeatherException.class.getName(),
-                ExceptionCode.WEATHER_EXCEPTION, log);
+        super(message, WeatherException.class.getName(), WEATHER_EXCEPTION, log);
     }
 }

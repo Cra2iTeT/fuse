@@ -1,23 +1,26 @@
 package com.fuse.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
-import com.fuse.common.SystemCode;
-import com.fuse.config.SystemConfig;
+import com.alibaba.excel.EasyExcel;
 import com.fuse.config.configure.SystemConfigure;
 import com.fuse.domain.pojo.PredictResult;
 import com.fuse.domain.to.PredictTo;
 import com.fuse.domain.vo.CsvTimeDivideVo;
 import com.fuse.domain.vo.R;
 import com.fuse.exception.PythonScriptRunException;
+import com.fuse.listener.PredictResultListener;
 import com.fuse.service.PredictService;
+import com.fuse.util.PythonScriptUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
+
+import static com.fuse.common.SystemCode.CSV_RESOLVE_SUCCESS;
+import static com.fuse.common.SystemCode.SUCCESS;
+import static com.fuse.config.SystemConfig.*;
 
 /**
  * @author Cra2iTeT
@@ -26,10 +29,13 @@ import java.util.List;
 @Service
 public class PredictServiceImpl implements PredictService {
 
+    private final PredictResultListener predictResultListener;
+
     private final SystemConfigure systemConfigure;
 
-    public PredictServiceImpl(SystemConfigure systemConfigure) {
+    public PredictServiceImpl(SystemConfigure systemConfigure, PredictResultListener predictResultListener) {
         this.systemConfigure = systemConfigure;
+        this.predictResultListener = predictResultListener;
     }
 
     @Override
@@ -41,12 +47,11 @@ public class PredictServiceImpl implements PredictService {
 
         CsvTimeDivideVo csvTimeDivideVo = timeResolveByPython();
         csvTimeDivideVo.setToken(file.getPath());
-        return new R<>(SystemCode.CSV_RESOLVE_SUCCESS.getCode(),
-                SystemCode.SUCCESS.getMsg(), csvTimeDivideVo);
+        return new R<>(CSV_RESOLVE_SUCCESS.getCode(), SUCCESS.getMsg(), csvTimeDivideVo);
     }
 
     private File generateFile() {
-        String prefix = SystemConfig.CSV_TEMPORARY_SAVE_PATH;
+        String prefix = CSV_TEMPORARY_SAVE_PATH;
         String filename = System.currentTimeMillis() + "_" + RandomUtil.randomNumbers(3);
         String path = prefix + "\\" + filename + ".csv";
         File file = new File(path);
@@ -60,19 +65,12 @@ public class PredictServiceImpl implements PredictService {
         return file;
     }
 
-    private CsvTimeDivideVo timeResolveByPython() throws PythonScriptRunException, IOException,
-            InterruptedException {
+    private CsvTimeDivideVo timeResolveByPython() throws PythonScriptRunException, IOException, InterruptedException {
         String[] arguments = new String[]{systemConfigure.getPythonExePath(),
-                SystemConfig.PYTHON_SCRIPT_Parent_PATH + "\\" +
-                        SystemConfig.PYTHON_SCRIPT_TIME_DIVIDE_PATH};
-        Process process = Runtime.getRuntime().exec(arguments);
-        BufferedReader bufferedReader = new
-                BufferedReader(new InputStreamReader(process.getInputStream()));
+                PYTHON_SCRIPT_Parent_PATH + "\\" + PYTHON_SCRIPT_TIME_DIVIDE_PATH};
 
-        //waitFor是用来显示脚本是否运行成功，1表示失败，0表示成功，还有其他的表示其他错误
-        if (process.waitFor() != 0) {
-            throw new PythonScriptRunException("python脚本执行错误,请与系统管理员联系");
-        }
+        BufferedReader bufferedReader;
+        bufferedReader = PythonScriptUtils.invokePythonScript(arguments);
 
         CsvTimeDivideVo csvTimeDivideVo = new CsvTimeDivideVo();
         csvTimeDivideVo.setStartTime(Long.parseLong(bufferedReader.readLine()));
@@ -82,9 +80,24 @@ public class PredictServiceImpl implements PredictService {
         return csvTimeDivideVo;
     }
 
-    // 预测
     @Override
-    public R predict(PredictTo predictTo) throws PythonScriptRunException {
-        return null;
+    public R predict(PredictTo predictTo) throws PythonScriptRunException, IOException, InterruptedException {
+        String[] arguments = new String[]{systemConfigure.getPythonExePath(),
+                PYTHON_SCRIPT_Parent_PATH + "\\" + PYTHON_SCRIPT_PREDICT_PATH};
+
+        BufferedReader bufferedReader;
+        bufferedReader = PythonScriptUtils.invokePythonScript(arguments);
+        String path = bufferedReader.readLine();
+
+        //转储csv
+        loadCsv2Database(path, predictTo.getRegion());
+
+        bufferedReader.close();
+        return new R<>(SUCCESS.getCode(), SUCCESS.getMsg());
+    }
+
+    public void loadCsv2Database(String path, String locationId) {
+        predictResultListener.setLocation(locationId);
+        EasyExcel.read(path, PredictResult.class, predictResultListener).doReadAll();
     }
 }

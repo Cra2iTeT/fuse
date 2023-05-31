@@ -12,4 +12,6 @@ import java.util.List;
 @Mapper
 public interface FanCityMapper {
     List<FanCity> getAllFans();
+
+    List<Integer> getFanId(String locationId);
 }

@@ -20,6 +20,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+import static com.fuse.common.SystemCode.PYTHON_SCRIPT_ERROR;
+import static com.fuse.common.SystemCode.WEATHER_ERROR;
+import static com.fuse.config.RabbitmqConfig.*;
+
 /**
  * @author Cra2iTeT
  * @since 2023/5/1 12:03
@@ -36,19 +40,18 @@ public class ExceptionListener {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @RabbitListener(queues = {RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_PYTHON_SCRIPT_EXCEPTION})
+    @RabbitListener(queues = {QUEUE_EXCEPTION_LISTENER_PYTHON_SCRIPT_EXCEPTION})
     public void pythonScriptProcess(String msg, Channel channel, Message message) {
         PythonScriptRunException pythonScriptRunException = JSONUtil
                 .toBean(msg, PythonScriptRunException.class);
         try {
-            WebSocketService.sendMessageToAll(new R(SystemCode.PYTHON_SCRIPT_ERROR.getCode(),
-                    SystemCode.PYTHON_SCRIPT_ERROR.getMsg(), null));
+            WebSocketService.sendMessageToAll(new R(PYTHON_SCRIPT_ERROR.getCode(),
+                    PYTHON_SCRIPT_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, pythonScriptRunException);
         } catch (IOException e) {
-            ObjectException exception = new ObjectException(RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_PYTHON_SCRIPT_EXCEPTION
+            ObjectException exception = new ObjectException(QUEUE_EXCEPTION_LISTENER_PYTHON_SCRIPT_EXCEPTION
                     + " 消息队列消费异常", IOException.class.getName(), e.getMessage());
-            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_OBJECT_EXCEPTION,
-                    JSONUtil.toJsonStr(exception));
+            rabbitTemplate.convertAndSend(ROUTINGKEY_OBJECT_EXCEPTION, JSONUtil.toJsonStr(exception));
         }
     }
 
@@ -56,29 +59,25 @@ public class ExceptionListener {
     public void weatherFetchProcess(String msg, Channel channel, Message message) {
         WeatherFetchException weatherFetchException = JSONUtil.toBean(msg, WeatherFetchException.class);
         try {
-            WebSocketService.sendMessageToAll(new R(SystemCode.WEATHER_ERROR.getCode(),
-                    SystemCode.WEATHER_ERROR.getMsg(), null));
+            WebSocketService.sendMessageToAll(new R(WEATHER_ERROR.getCode(), WEATHER_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, weatherFetchException);
         } catch (IOException e) {
-            ObjectException exception = new ObjectException(RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION
+            ObjectException exception = new ObjectException(QUEUE_EXCEPTION_LISTENER_WEATHER_FETCH_EXCEPTION
                     + " 消息队列消费异常", IOException.class.getName(), e.getMessage());
-            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_OBJECT_EXCEPTION,
-                    JSONUtil.toJsonStr(exception));
+            rabbitTemplate.convertAndSend(ROUTINGKEY_OBJECT_EXCEPTION, JSONUtil.toJsonStr(exception));
         }
     }
 
-    @RabbitListener(queues = {RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION})
+    @RabbitListener(queues = {QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION})
     public void weatherProcess(String msg, Channel channel, Message message) {
         WeatherException weatherException = JSONUtil.toBean(msg, WeatherException.class);
         try {
-            WebSocketService.sendMessageToAll(new R(SystemCode.WEATHER_ERROR.getCode(),
-                    SystemCode.WEATHER_ERROR.getMsg(), null));
+            WebSocketService.sendMessageToAll(new R(WEATHER_ERROR.getCode(), WEATHER_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, weatherException);
         } catch (IOException e) {
-            ObjectException exception = new ObjectException(RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION
+            ObjectException exception = new ObjectException(QUEUE_EXCEPTION_LISTENER_WEATHER_EXCEPTION
                     + " 消息队列消费异常", IOException.class.getName(), e.getMessage());
-            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_OBJECT_EXCEPTION,
-                    JSONUtil.toJsonStr(exception));
+            rabbitTemplate.convertAndSend(ROUTINGKEY_OBJECT_EXCEPTION, JSONUtil.toJsonStr(exception));
         }
     }
 
@@ -90,10 +89,9 @@ public class ExceptionListener {
                     SystemCode.MQ_ERROR.getMsg(), null));
             resolveAndSaveToDB(channel, message, exception);
         } catch (IOException e) {
-            ObjectException newException = new ObjectException(RabbitmqConfig.QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION
+            ObjectException newException = new ObjectException(QUEUE_EXCEPTION_LISTENER_OBJECT_EXCEPTION
                     + " 消息队列消费异常", IOException.class.getName(), e.getMessage());
-            rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_OBJECT_EXCEPTION,
-                    JSONUtil.toJsonStr(newException));
+            rabbitTemplate.convertAndSend(ROUTINGKEY_OBJECT_EXCEPTION, JSONUtil.toJsonStr(newException));
         }
     }
 

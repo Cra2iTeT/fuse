@@ -13,6 +13,7 @@ import com.fuse.config.RabbitmqConfig;
 import com.fuse.config.SystemConfig;
 import com.fuse.config.configure.SystemConfigure;
 import com.fuse.domain.pojo.CityWeatherEachHour;
+import com.fuse.domain.pojo.FanCity;
 import com.fuse.domain.vo.CsvTimeDivideVo;
 import com.fuse.exception.ObjectException;
 import com.fuse.exception.PythonScriptRunException;
@@ -33,6 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FuseApplicationTests {
@@ -135,5 +138,31 @@ class FuseApplicationTests {
         System.out.println(file.getName());
         System.out.println(file.getAbsolutePath());
         System.out.println(file.getPath());
+    }
+
+    @Test
+    void test10() {
+        List<FanCity> cities = new ArrayList<>();
+
+        FanCity f = new FanCity("1001", 1);
+        FanCity f2 = new FanCity("1001", 2);
+        FanCity f3 = new FanCity("1001", 3);
+        FanCity f11 = new FanCity("1002", 1);
+        FanCity f12 = new FanCity("1002", 2);
+        FanCity f13 = new FanCity("1002", 3);
+        FanCity f23 = new FanCity("1003", 1);
+
+        cities.add(f);
+        cities.add(f2);
+        cities.add(f3);
+        cities.add(f11);
+        cities.add(f12);
+        cities.add(f13);
+        cities.add(f23);
+
+
+        Map<String, List<FanCity>> collect = cities.stream().collect(Collectors.groupingBy(FanCity::getLocationId));
+
+        collect.values().forEach(System.out::println);
     }
 }

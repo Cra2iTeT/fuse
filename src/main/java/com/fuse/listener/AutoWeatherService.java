@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fuse.config.RabbitmqConfig.ROUTINGKEY_WEATHER_EXCEPTION;
+import static com.fuse.config.RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION;
+
 /**
  * @author Cra2iTeT
  * @since 2023/5/10 10:01
@@ -77,8 +80,7 @@ public class AutoWeatherService {
                 } catch (ObjectException e) {
                     WeatherFetchException exception = new
                             WeatherFetchException("从网络中获取天气，更新到数据库时异常", e.getMessage());
-                    rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION,
-                            JSONUtil.toJsonStr(exception));
+                    rabbitTemplate.convertAndSend(ROUTINGKEY_WEATHER_FETCH_EXCEPTION, JSONUtil.toJsonStr(exception));
                 }
             });
         }
@@ -138,14 +140,12 @@ public class AutoWeatherService {
                     WeatherException exception = new
                             WeatherException(chinaCity.getLocationName() + "市，温度异常。"
                             + cityWeatherEachHour.getDate() + "温度：" + cityWeatherEachHour.getTemperature());
-                    rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_EXCEPTION,
-                            JSONUtil.toJsonStr(exception));
+                    rabbitTemplate.convertAndSend(ROUTINGKEY_WEATHER_EXCEPTION, JSONUtil.toJsonStr(exception));
                 }
             } catch (RuntimeException e) {
                 WeatherFetchException exception = new
                         WeatherFetchException("从网络中获取天气异常", e.getMessage());
-                rabbitTemplate.convertAndSend(RabbitmqConfig.ROUTINGKEY_WEATHER_FETCH_EXCEPTION,
-                        JSONUtil.toJsonStr(exception));
+                rabbitTemplate.convertAndSend(ROUTINGKEY_WEATHER_FETCH_EXCEPTION, JSONUtil.toJsonStr(exception));
             }
         }
 

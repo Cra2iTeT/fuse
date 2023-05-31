@@ -3,7 +3,14 @@
 <mapper namespace="com.fuse.mapper.FanCityMapper">
 
     <select id="getAllFans" resultType="com.fuse.domain.pojo.FanCity">
-        SELECT location_id,fan_id FROM `fan_city`
+        SELECT location_id, fan_id
+        FROM `fan_city`
+    </select>
+
+    <select id="getFanId" resultType="java.lang.Integer">
+        SELECT fan_id
+        FROM `fan_city`
+        where location_id = #{locationId}
     </select>
 
 </mapper>
