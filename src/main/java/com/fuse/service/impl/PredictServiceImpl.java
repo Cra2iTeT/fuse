@@ -17,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.fuse.common.SystemCode.CSV_RESOLVE_SUCCESS;
 import static com.fuse.common.SystemCode.SUCCESS;
@@ -40,7 +43,7 @@ public class PredictServiceImpl implements PredictService {
 
     @Override
     public R csvResolve(MultipartFile csv) throws PythonScriptRunException, IOException,
-            InterruptedException {
+            InterruptedException, ParseException {
         File file = generateFile();
 
         csv.transferTo(file);
@@ -65,7 +68,7 @@ public class PredictServiceImpl implements PredictService {
         return file;
     }
 
-    private CsvTimeDivideVo timeResolveByPython() throws PythonScriptRunException, IOException, InterruptedException {
+    private CsvTimeDivideVo timeResolveByPython() throws PythonScriptRunException, IOException, InterruptedException, ParseException {
         String[] arguments = new String[]{systemConfigure.getPythonExePath(),
                 PYTHON_SCRIPT_Parent_PATH + "\\" + PYTHON_SCRIPT_TIME_DIVIDE_PATH};
 
@@ -73,8 +76,11 @@ public class PredictServiceImpl implements PredictService {
         bufferedReader = PythonScriptUtils.invokePythonScript(arguments);
 
         CsvTimeDivideVo csvTimeDivideVo = new CsvTimeDivideVo();
-        csvTimeDivideVo.setStartTime(Long.parseLong(bufferedReader.readLine()));
-        csvTimeDivideVo.setEndTime(Long.parseLong(bufferedReader.readLine()));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startTime = sdf.parse(bufferedReader.readLine());
+        Date endTime = sdf.parse(bufferedReader.readLine());
+        csvTimeDivideVo.setStartTime(startTime.getTime());
+        csvTimeDivideVo.setEndTime(endTime.getTime());
 
         bufferedReader.close();
         return csvTimeDivideVo;

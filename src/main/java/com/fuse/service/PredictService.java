@@ -8,6 +8,7 @@ import com.fuse.exception.PythonScriptRunException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  * @since 2023/4/29 13:53
  */
 public interface PredictService {
-    R csvResolve(MultipartFile csv) throws PythonScriptRunException, IOException, InterruptedException;
+    R csvResolve(MultipartFile csv) throws PythonScriptRunException, IOException, InterruptedException, ParseException;
 
     R predict(PredictTo predictTo) throws PythonScriptRunException, InterruptedException, IOException;
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import static com.fuse.common.SystemCode.CSV_RESOLVE_ERROR_TYPE_MISMATCH;
 import static com.fuse.common.SystemCode.ERROR;
@@ -43,14 +44,14 @@ public class PredictController {
      */
     @PostMapping("/csv")
     public R CsvTimeDivide(@RequestParam("csv") MultipartFile csv) {
-        if (csv.isEmpty() || !"csv".equals(csv.getContentType())) {
+        /*if (csv.isEmpty() || !"csv".equals(csv.getContentType())) {
             return new R<>(CSV_RESOLVE_ERROR_TYPE_MISMATCH.getCode(), CSV_RESOLVE_ERROR_TYPE_MISMATCH.getMsg());
-        }
+        }*/
         try {
             return predictService.csvResolve(csv);
         } catch (PythonScriptRunException e) {
             rabbitTemplate.convertAndSend(ROUTINGKEY_PYTHON_SCRIPT_EXCEPTION, JSONUtil.toJsonStr(e));
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ParseException e) {
             ObjectException exception = new ObjectException("csv解析失败", ObjectException.class.getName(),
                     e.getMessage());
             rabbitTemplate.convertAndSend(ROUTINGKEY_OBJECT_EXCEPTION, JSONUtil.toJsonStr(exception));
